@@ -63,6 +63,7 @@ export const items = [
       </SvgIcon>
     )
   },
+
   {
     title: 'Login',
     path: '/auth/login',

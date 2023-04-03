@@ -1,14 +1,15 @@
 import Head from 'next/head';
-import { useCallback, useMemo, useState } from 'react';
+import { use, useCallback, useMemo, useState } from 'react';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-
+import axios, { Axios } from 'axios'; 
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
+
 import {
+  Alert,
   Box,
   Button,
   Container,
-  Pagination,
   Stack,
   SvgIcon,
   Typography,
@@ -18,6 +19,7 @@ import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { CompanyCard } from 'src/sections/book/book-table';
 import { CategorySearch } from 'src/sections/category/category-search';
 import {CategoryTable} from 'src/sections/category/category-table';
+import { set } from 'lodash';
 
 
 const style = {
@@ -37,6 +39,28 @@ const Page = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+
+  const [name, setName] = useState('')
+  const api="http://localhost:8000/categories";
+  function load(){
+
+    location.reload();
+}
+  const Postdata = (e)=>{
+    
+    if(name == ""){
+     return setOpen(false)
+    }
+    else{
+        axios.post(api,{
+          name
+        }).then(res => {
+          load()
+         
+        }).catch(err => console.log(err))
+  }
+  }
   return (
     <>
     <Head>
@@ -96,12 +120,10 @@ const Page = () => {
         aria-describedby="keep-monted-modal-description"
       >
         <Box sx={style}>
-        <TextField fullWidth label="nhập mã loại "  />
-        <div className='mt-2 '></div  >
-          <TextField fullWidth label="nhập loại sách"  />
+          <TextField fullWidth label="nhập loại sách" name='name' value={name} onChange={(e)=> setName(e.target.value)} />
           <div className='mt-2 '>
               <Button 
-
+                onClick={Postdata}
                 variant="contained"
               >
                 save
