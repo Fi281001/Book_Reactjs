@@ -16,10 +16,10 @@ import {
   Unstable_Grid2 as Grid
 } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { CompanyCard } from 'src/sections/book/book-table';
+
 import { CategorySearch } from 'src/sections/category/category-search';
 import {CategoryTable} from 'src/sections/category/category-table';
-import { set } from 'lodash';
+
 
 
 const style = {
@@ -50,13 +50,15 @@ const Page = () => {
   const Postdata = (e)=>{
     
     if(name == ""){
+      alert("moi nhap day du")
      return setOpen(false)
+    
     }
     else{
         axios.post(api,{
           name
         }).then(res => {
-          load()
+         load()
          
         }).catch(err => console.log(err))
   }
@@ -108,7 +110,7 @@ const Page = () => {
               </Button>
             </div>
           </Stack>
-          <CategorySearch/>
+          {/* <CategorySearch/> */}
           <CategoryTable/> 
         </Stack>
       </Container>
@@ -120,7 +122,7 @@ const Page = () => {
         aria-describedby="keep-monted-modal-description"
       >
         <Box sx={style}>
-          <TextField fullWidth label="nhập loại sách" name='name' value={name} onChange={(e)=> setName(e.target.value)} />
+          <TextField fullWidth label="nhập loại sách" name='name' value={name} onChange={(e)=> setName(e.target.value)} autoFocus/>
           <div className='mt-2 '>
               <Button 
                 onClick={Postdata}

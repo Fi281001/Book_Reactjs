@@ -3,6 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Table from "react-bootstrap/Table";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
+import { Card, InputAdornment, OutlinedInput, SvgIcon } from '@mui/material';
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { Box, Button, Unstable_Grid2 as Grid } from "@mui/material";
@@ -23,7 +25,7 @@ export const CategoryTable = (props) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [filter, setFilter] = useState([]);
-
+  const [search,setSearch] = useState(" ");
   const api = "http://localhost:8000/categories";
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export const CategoryTable = (props) => {
       setFilter(res);
     };
     getPosts();
-  }, []);
+  }, [setFilter]);
 
   const handleDelete = async (cat) => {
     if (confirm(`Bạn có muốn xóa ${cat.name} ko?`)) {
@@ -40,10 +42,36 @@ export const CategoryTable = (props) => {
       setFilter(filter.filter((f) => f.id !== cat.id));
     }
   };
-
+  const Search = ()=>{
+    return(
+      <Card sx={{ p: 2 }}>
+    <OutlinedInput
+    
+      fullWidth
+      type="text"
+      placeholder="Search User"
+      name="search"
+      value={search}
+      onChange={(e)=>setSearch(e.target.value)}
+      startAdornment={(
+        <InputAdornment position="start">
+          <SvgIcon
+            color="action"
+            fontSize="small"
+          >
+            <MagnifyingGlassIcon />
+          </SvgIcon>
+        </InputAdornment>
+      )}
+      sx={{ maxWidth: 500 }}
+    />
+  </Card>
+    )
+  }
   const Categories = () => {
     return (
       <>
+       <Search/>
         <Table striped bordered hover>
           <thead>
             <tr style={{ background: "#6366F1" }} className="text-white">
@@ -54,7 +82,14 @@ export const CategoryTable = (props) => {
             </tr>
           </thead>
           <tbody>
-            {filter.map((cat) => (
+            {filter.filter((cat)=>{
+               if(search === " "){
+                return cat
+              }
+              else if(cat.name.toLowerCase().includes(search.toLocaleLowerCase())){
+                return cat
+              }
+            }).map((cat) => (
               <tr key={cat.id}>
                 <td>{cat.id}</td>
                 <td>{cat.name}</td>

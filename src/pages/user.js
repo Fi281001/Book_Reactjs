@@ -1,15 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
 import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
+import axios, { Axios } from 'axios'; 
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
-import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
-import { useSelection } from 'src/hooks/use-selection';
+import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material'
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { UserTable } from 'src/sections/user/user-table';
-import { UserSearch } from 'src/sections/user/user-search';
-import { applyPagination } from 'src/utils/apply-pagination';
+
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 const now = new Date();
@@ -30,6 +26,70 @@ const Page = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  // const [name, setName] = useState("")
+  // const [phone, setPhone] = useState("")
+  // const [email, setEmail] = useState("")
+  // const [address, setAddress] = useState("")
+  // const [point,setPoint] = useState()
+  // const [imguser, setImage] = useState("");
+
+  const [user, setUser] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    point: 0,
+    imguser: ""
+  });
+  function load(){
+
+    location.reload();
+}
+const uploadImage = async (e) => {
+  const file = e.target.files[0];
+  const base64 = await convertBase64(file);
+  setUser({
+    ...user,imguser:base64
+  })
+};
+
+const convertBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+  });
+};
+  const api="http://localhost:8000/user";
+
+  const Postdata = (e)=>{
+    
+    if(user.name == "" || user.phone =="" || user.email == "" || user.address=="" || user.point=="" ){
+         alert("xin nhập đầy đủ")
+         return handleClose()
+       }
+    else{
+        axios.post(api,{
+          name: user.name,
+          phone: user.phone,
+          email: user.email,
+          address: user.email,
+          point: user.point,
+          imguser: user.imguser
+        }).then(res => {
+         load()
+         console.log(res);
+        }).catch(err => console.log(err))
+  }
+  }
   return (
     
     <>
@@ -76,7 +136,7 @@ const Page = () => {
               </Button>
               </div>
             </Stack>
-            <UserSearch />
+
             <UserTable
             />
           </Stack>
@@ -92,10 +152,39 @@ const Page = () => {
         aria-describedby="keep-mounted-modal-description"
       >
         <Box sx={style}>
-          <TextField fullWidth label="fullWidth" id="fullWidth" />
-          <Typography id="keep-mounted-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
+        <input
+        onChange={
+          uploadImage
+        }
+        multiple
+        type="file"
+        name='img'
+        className='mb-2'    
+      />
+        <TextField className='mb-2' fullWidth label="nhập tên sách" name='name' value={user.name} onChange={(e)=> setUser({
+          ...user,name: e.target.value
+        })} />
+        <TextField className='mb-2' fullWidth label="nhập phone" name='phone' value={user.phone} onChange={(e)=> setUser({
+          ...user,phone: e.target.value
+        })} />
+        <TextField className='mb-2' fullWidth label="nhập email"  name='email' value={user.email} onChange={(e)=> setUser({
+          ...user,email: e.target.value
+        })} />
+        <TextField className='mb-2' fullWidth label="nhập địa chỉ" name='address' value={user.address} onChange={(e)=> setUser({
+          ...user,address: e.target.value
+        })} />
+        <TextField className='mb-2' fullWidth label="nhập point" name='point' value={user.point} onChange={(e)=> setUser({
+          ...user,point: +e.target.value
+        })} />
+          <div className='mt-2 '>
+              <Button 
+                onClick={Postdata}
+                variant="contained"
+              >
+                save
+              </Button>
+            </div>
+         
         </Box>
       </Modal>
     </div>

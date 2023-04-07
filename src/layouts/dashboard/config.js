@@ -32,8 +32,8 @@ export const items = [
     path: '/categorybook',
     icon: (
       <SvgIcon fontSize="small">
-        <ChartBarIcon />
-      </SvgIcon>
+      <ShoppingBagIcon />
+    </SvgIcon>
     )
   },
   {

@@ -6,6 +6,7 @@ import Table from "react-bootstrap/Table";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import { Button, Box } from "@mui/material";
+import { BookSearch } from 'src/sections/book/book-search';
 const style = {
   position: "absolute",
   top: "50%",
@@ -16,6 +17,7 @@ const style = {
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  
 };
 export const BookTable = (props) => {
   const [open, setOpen] = useState(false);
@@ -25,8 +27,9 @@ export const BookTable = (props) => {
   const [paginatedBook, setpaginatedBook] = useState([]);
   const [curren, setcurren] = useState(1);
   const pageSize = 8;
+  
   const api = "http://localhost:8000/book";
-
+  // lấy api hiển thị dữ liệu
   useEffect(() => {
     const getPosts = async () => {
       const res = await axios.get(api);
@@ -47,7 +50,7 @@ export const BookTable = (props) => {
     const paginatedBook = _(book).slice(startindex).take(pageSize).value();
     setpaginatedBook(paginatedBook);
   };
-  // xoa
+  // xoa 1 phần tử trong api
   const handleDelete = async (b) => {
     if (confirm(`Bạn có muốn xóa ${b.name} ko?`)) {
       await axios.delete(api + "/" + b.id);
@@ -55,6 +58,7 @@ export const BookTable = (props) => {
       setBook(book.filter((f) => f.id !== b.id));
     }
   };
+  // hiển thị api ra table
   const Book = () => {
     return (
       <>
@@ -62,7 +66,7 @@ export const BookTable = (props) => {
         <Table striped bordered hover>
           <thead>
             <tr style={{ background: "#6366F1" }} className="text-white">
-              {/* <th className='w-20 '>STT</th> */}
+              
               <th className="w-20 ">Ảnh</th>
               <th className="w-20 ">Name</th>
               <th className="w-20 ">Category</th>
@@ -77,7 +81,7 @@ export const BookTable = (props) => {
           <tbody>
             {paginatedBook.map((book) => (
               <tr key={book.id}>
-                {/* <td>{book.id}</td> */}
+               
                 <td
                   style={{
                     backgroundImage: `url(${book.img})`,
@@ -144,11 +148,12 @@ export const BookTable = (props) => {
       </Modal>
     );
   };
+  // hiển thị phân trang
   const Page = () => {
     return (
       <nav className="d-flex justify-content-center">
         <ul className="pagination">
-          {pages.map((page, key) => (
+          {pages.map((page) => (
             <li className={page === curren ? "page-item active" : "page-item"} key={page}>
               <a className="page-link" onClick={() => pagination(page)}>
                 {page}
@@ -161,6 +166,7 @@ export const BookTable = (props) => {
   };
   return (
     <>
+     <BookSearch/>
       <Book />
       <Page />
     </>
