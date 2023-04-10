@@ -27,13 +27,6 @@ const Page = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // const [name, setName] = useState("")
-  // const [phone, setPhone] = useState("")
-  // const [email, setEmail] = useState("")
-  // const [address, setAddress] = useState("")
-  // const [point,setPoint] = useState()
-  // const [imguser, setImage] = useState("");
-
   const [user, setUser] = useState({
     name: "",
     phone: "",

@@ -6,7 +6,7 @@ import { use, useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import Typography from '@mui/material/Typography';
+
 import { Button, Box } from "@mui/material";
 const style = {
   position: "absolute",
@@ -22,17 +22,48 @@ const style = {
 import Pagegination from "src/sections/user/page";
 import UserSearch from "src/sections/user//user-search";
 
+
 export const UserTable = (props) => {
 //open update
+
+const [update, setUpdate] = useState({
+  name: "",
+  phone: "",
+  email: "",
+  address: "",
+  point: 0,
+  imguser: ""
+});
+// open model update
   const [open, setOpen] = useState(false);
   const handleOpen = async (id) =>{
+    
     console.log("id",id);
     const api = `http://localhost:8000/user/${id}`;
     const res= await axios.get(api);
-    setDetail(res.data)
+    setUpdate(res.data)
     console.log("detail", res);
    setOpen(true);
  } 
+ //xử lý update
+
+ const Postdata = async ()=>{
+
+  const apiupdate = `http://localhost:8000/user/${update.id}`;
+   const res=  await axios.put(apiupdate,{
+          name: update.name,
+          phone: update.phone,
+          email: update.email,
+          address: update.address,
+          point: update.point,
+          imguser: update.imguser
+        }).then(res => {
+          
+         loading()
+         console.log(res);
+        }).catch(err => console.log(err))
+   }
+  
 
 
   // close update
@@ -59,13 +90,13 @@ export const UserTable = (props) => {
     _page: 1,
     _limit: 5,
     _totalRows: 1,
-  
+    
   });
   const [load, setLoad] = useState({
     _page: 1,
     _limit: 5,
      q: "",
-     
+
   });
 
   useEffect(() => {
@@ -73,14 +104,15 @@ export const UserTable = (props) => {
       const param = queryString.stringify(load);
      
       try {
-        const apilength = await axios.get("http://localhost:8000/user");
-        const legth = apilength.data.length
-        console.log(legth);
+        const apilength = await axios.get(`http://localhost:8000/user?q=${load.q}`);
+        const legth =apilength.data.length
+    
         const api = `http://localhost:8000/user?${param}`;
+
         const res= await  fetch(api);
         const resjson = await res.json();
         console.log("test",{resjson});
-         
+        
         const data = resjson;
         setUser(data);
         setPagination({...pagination, _page: load._page, _totalRows: legth, q: load.newSearch});
@@ -147,8 +179,8 @@ export const UserTable = (props) => {
                   }}
                 ></td>
                 <td>{user.name}</td>
-                <td>{user.email}</td>
                 <td>{user.phone}</td>
+                <td>{user.email}</td>
                 <td>{user.address}</td>
                 <td>{user.point}</td>
                 <td>
@@ -172,6 +204,36 @@ export const UserTable = (props) => {
       </>
     );
   };
+  //up file
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    setUpdate({
+      ...update,imguser:base64
+    })
+  };
+  //chuyển qua base 64
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+  
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+  
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+  // const handleinput = (e)=>{
+  //   console.log("ssss", e.target.value
+  //   );
+  //   console.log("aaaa", e.target.name
+  //   );
+  //   setUpdate({...update, [e.target.name]: e.target.value})
+  // }
   const ModelUpdate = () => {
     return (
       <Modal
@@ -183,11 +245,62 @@ export const UserTable = (props) => {
         aria-describedby="keep-monted-modal-description"
       >
         <Box sx={style}>
-         
-          <label>{detail.id}</label>
+
+        <img src={update.imguser} style={{width: "100px", height:"100px"}}/>
+        <input
+        onChange={
+          uploadImage
+        }
+    
+        multiple
+        type="file"
+        name='img'
+        style={{marginTop: "4px", marginBottom: "4px"}}
        
+        />
+        <TextField
+        
+          style={{marginTop: "4px", marginBottom: "4px",width: "334px"}}
+       
+          maxRows={4}
+          value={update.name} onChange={(e)=> setUpdate({
+             ...update,name : e.target.value
+         })} 
+          />
+        <TextField
+        
+          style={{marginTop: "4px", marginBottom: "4px", width: "334px"}}
+       
+          maxRows={4}
+          value={update.phone} onChange={(e)=> setUpdate({
+            ...update,phone: e.target.value
+          })} />
+        <TextField
+      
+        style={{marginTop: "4px", marginBottom: "4px",width: "334px"}}
+     
+        maxRows={4}
+        value={update.email} onChange={(e)=> setUpdate({
+          ...update,email: e.target.value
+        })} />
+          <TextField
+        
+          style={{marginTop: "4px", marginBottom: "4px",width: "334px"}}
+       
+          maxRows={4}
+          value={update.address} onChange={(e)=> setUpdate({
+            ...update,address: e.target.value
+          })} />
+        <TextField
+        
+          style={{marginTop: "4px", marginBottom: "4px",width: "334px"}}
+          maxRows={4}
+          value={update.point} onChange={(e)=> setUpdate({
+            ...update, point: +e.target.value
+          })} />
           <div className="mt-2 ">
             <Button variant="contained" 
+              onClick={Postdata}
              >save</Button>
           </div>
         </Box>

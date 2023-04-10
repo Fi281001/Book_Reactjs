@@ -28,6 +28,10 @@ export default function Pagegination(props) {
     }
   }
 
+    console.log("page: ", _page);
+    console.log("ttpage: ", totalPages);
+    console.log("ttrow: ", _totalRows);
+    console.log("limit: ", _limit);
   return (
     <div style={{ textAlign: "center" }}>
      <Button
@@ -43,7 +47,7 @@ export default function Pagegination(props) {
       </Button> 
 
       <Button
-      disabled = {_page >= totalPages}
+        disabled = {_page >= totalPages}
         style={{ marginLeft: "5px" }}
         onClick={() => {
           handlepagechange(_page + 1);
