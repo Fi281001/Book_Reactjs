@@ -1,4 +1,7 @@
 import * as React from "react";
+import queryString from "query-string";
+import Pagegination from "src/sections/category/page";
+import CategorySearch from "src/sections/category/category-search"
 import "bootstrap/dist/css/bootstrap.min.css";
 import Table from "react-bootstrap/Table";
 import { useState, useEffect } from "react";
@@ -24,22 +27,63 @@ export const CategoryTable = (props) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [filter, setFilter] = useState([]);
-  const [search,setSearch] = useState(" ");
+  const [cat,setCat] = useState([]);
   const api = "http://localhost:8000/categories";
 
+  // phân trang
+  const [pagination, setPagination] = useState({
+    _page: 1,
+    _limit: 5,
+    _totalRows: 1,
+  });
+  //xử lý api
+  const [load, setLoad] = useState({
+    _page: 1,
+    _limit: 5,
+    q: "",
+  });
   useEffect(() => {
-    const getPosts = async () => {
-      const { data: res } = await axios.get(api);
-      setFilter(res);
-    };
-    getPosts();
-  }, [setFilter]);
+    async function getPosts() {
+      const param = queryString.stringify(load);
 
+      try {
+        const apilength = await axios.get(`http://localhost:8000/categories?q=${load.q}`);
+        const legth = apilength.data.length;
+        const api = `http://localhost:8000/categories?${param}`;
+        const res = await fetch(api);
+        const resjson = await res.json();
+        const data = resjson;
+        setCat(data);
+        setPagination({ ...pagination, _page: load._page, _totalRows: legth, q: load.newSearch });
+
+      } catch (error) {
+        console.log("error");
+      }
+    }
+    getPosts();
+  }, [load]);
+
+    // xử lý phân trang
+    function handlepagechange(newPage) {
+      setLoad({ ...load, _page: newPage });
+    }
+    // load lại trang
+    function loading() {
+      location.reload();
+    }
+    // xử lý search
+    function handleSearch(newSearch) {
+      console.log("search", newSearch);
+      setLoad({
+        ...load,
+        _page: 1,
+        q: newSearch.search,
+      });
+    }
   const handleDelete = async (cat) => {
     if (confirm(`Bạn có muốn xóa ${cat.name} ko?`)) {
       await axios.delete(api + "/" + cat.id);
-      setFilter(filter.filter((f) => f.id !== cat.id));
+      loading();
     }
   };
   const Search = ()=>{
@@ -71,7 +115,6 @@ export const CategoryTable = (props) => {
   const Categories = () => {
     return (
       <>
-       <Search/>
         <Table striped bordered hover>
           <thead>
             <tr style={{ background: "#6366F1" }} className="text-white">
@@ -82,23 +125,12 @@ export const CategoryTable = (props) => {
             </tr>
           </thead>
           <tbody>
-            {filter.filter((cat)=>{
-               if(search === " "){
-                return cat
-              }
-              else if(cat.name.toLowerCase().includes(search.toLocaleLowerCase())){
-                return cat
-              }
-            }).map((cat) => (
+           {cat.map((cat) => (
               <tr key={cat.id}>
                 <td>{cat.id}</td>
                 <td>{cat.name}</td>
                 <td>
                   <Button
-                    onClick={() => {
-                      handleOpen();
-                      console.log(`>>>>>>>${cat.name}`);
-                    }}
                     variant="contained"
                     color="success"
                   >
@@ -107,7 +139,7 @@ export const CategoryTable = (props) => {
                 </td>
 
                 <td>
-                  {" "}
+        
                   <Button variant="contained" color="error" onClick={() => handleDelete(cat)}>
                     Delete
                   </Button>
@@ -140,8 +172,10 @@ export const CategoryTable = (props) => {
 
   return (
     <>
+    <CategorySearch onSubmit={handleSearch} />
       <Categories />
       <ModelUpdate />
+      <Pagegination Pagination={pagination} onPageChange={handlepagechange} />
     </>
   );
 };

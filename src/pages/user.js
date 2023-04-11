@@ -70,14 +70,7 @@ const convertBase64 = (file) => {
          return handleClose()
        }
     else{
-        axios.post(api,{
-          name: user.name,
-          phone: user.phone,
-          email: user.email,
-          address: user.email,
-          point: user.point,
-          imguser: user.imguser
-        }).then(res => {
+        axios.post(api,user).then(res => {
          load()
          console.log(res);
         }).catch(err => console.log(err))
@@ -154,9 +147,11 @@ const convertBase64 = (file) => {
         name='img'
         className='mb-2'    
       />
-        <TextField className='mb-2' fullWidth label="nhập tên sách" name='name' value={user.name} onChange={(e)=> setUser({
+        <TextField className='mb-2' fullWidth label="nhập tên sách" name='name' value={user.name} onChange={(e)=> {
+          console.log("====> name::::", e.target.value);
+          return setUser({
           ...user,name: e.target.value
-        })} />
+        })}} />
         <TextField className='mb-2' fullWidth label="nhập phone" name='phone' value={user.phone} onChange={(e)=> setUser({
           ...user,phone: e.target.value
         })} />

@@ -1,12 +1,16 @@
-import _ from "lodash";
 import axios from "axios";
+import queryString from "query-string";
+import _, { set, update } from "lodash";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
 import { Button, Box } from "@mui/material";
-import { BookSearch } from 'src/sections/book/book-search';
+import Typography from "@mui/material/Typography";
 const style = {
   position: "absolute",
   top: "50%",
@@ -14,55 +18,97 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
+  border: "1px solid #000",
+   boxShadow: 24,
   p: 4,
-  
 };
+import Pagegination from "src/sections/book/page";
+import BookSearch from "src/sections/book/book-search";
 export const BookTable = (props) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [book, setBook] = useState([]);
-  const [paginatedBook, setpaginatedBook] = useState([]);
-  const [curren, setcurren] = useState(1);
-  const pageSize = 8;
-  
+  // mở model detail
+  const [openDetail, setOpenDetail] = useState(false);
+  const [detail, setDetail] = useState([]);
+  const handleOpenDetail = async (id) => {
+    console.log("id", id);
+    const api = `http://localhost:8000/book/${id}`;
+    const res = await axios.get(api);
+    setDetail(res.data);
+    setOpenDetail(true);
+  };
+  // đóng model deatail
+  const handleCloseDetail = () => setOpenDetail(false); 
+
+    // phân trang
+    const [pagination, setPagination] = useState({
+      _page: 1,
+      _limit: 5,
+      _totalRows: 1,
+    });
+    // xử lí api
+    const [load, setLoad] = useState({
+      _page: 1,
+      _limit: 5,
+      q: "",
+    });
+
+
   const api = "http://localhost:8000/book";
   // lấy api hiển thị dữ liệu
   useEffect(() => {
-    const getPosts = async () => {
-      const res = await axios.get(api);
-      setBook(res.data);
-      setpaginatedBook(_(res.data).slice(0).take(pageSize).value());
-    };
+    async function getPosts() {
+      const param = queryString.stringify(load);
+
+      try {
+        const apilength = await axios.get(`http://localhost:8000/book?q=${load.q}`);
+        const legth = apilength.data.length;
+
+        const api = `http://localhost:8000/book?${param}`;
+
+        const res = await fetch(api);
+        const resjson = await res.json();
+        const data = resjson;
+        setBook(data);
+        setPagination({ ...pagination, _page: load._page, _totalRows: legth, q: load.newSearch });
+
+      } catch (error) {
+        console.log("error");
+      }
+    }
     getPosts();
-  }, []);
+  }, [load]);
 
-  // phan trang
-  const pageCount = book ? Math.ceil(book.length / pageSize) : 0;
-  if (pageCount === 1) return null;
-  const pages = _.range(1, pageCount + 1);
+  function handlepagechange(newPage) {
+    setLoad({ ...load, _page: newPage });
+  }
+  // load lại trang
+  function loading() {
+    location.reload();
+  }
+  // xử lý search
+  function handleSearch(newSearch) {
+    console.log("search", newSearch);
+    setLoad({
+      ...load,
+      _page: 1,
+      q: newSearch.search,
+    });
+  }
 
-  const pagination = (pagenumber) => {
-    setcurren(pagenumber);
-    const startindex = (pagenumber - 1) * pageSize;
-    const paginatedBook = _(book).slice(startindex).take(pageSize).value();
-    setpaginatedBook(paginatedBook);
-  };
-  // xoa 1 phần tử trong api
+  // xóa Api
   const handleDelete = async (b) => {
     if (confirm(`Bạn có muốn xóa ${b.name} ko?`)) {
       await axios.delete(api + "/" + b.id);
-      setpaginatedBook(paginatedBook.filter((f) => f.id !== b.id));
-      setBook(book.filter((f) => f.id !== b.id));
+      loading();
     }
   };
   // hiển thị api ra table
   const Book = () => {
     return (
       <>
-        {console.log(">>>", book)}
         <Table striped bordered hover>
           <thead>
             <tr style={{ background: "#6366F1" }} className="text-white">
@@ -79,7 +125,7 @@ export const BookTable = (props) => {
             </tr>
           </thead>
           <tbody>
-            {paginatedBook.map((book) => (
+            {book.map((book) => (
               <tr key={book.id}>
                
                 <td
@@ -97,7 +143,9 @@ export const BookTable = (props) => {
                 <td>{book.status}</td>
 
                 <td>
-                  <Button onClick={handleOpen}>Detail</Button>
+                  <Button onClick={() => {
+                      handleOpenDetail(book.id);
+                    }}>Detail</Button>
                 </td>
                 <td>
                   <Button onClick={handleOpen} variant="contained" color="success">
@@ -117,6 +165,30 @@ export const BookTable = (props) => {
       </>
     );
   };
+    //up file ảnh
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    setUpdate({
+      ...update,
+      imguser: base64,
+    });
+  };
+  //chuyển qua base 64
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
   const ModelUpdate = () => {
     return (
       <Modal
@@ -135,6 +207,7 @@ export const BookTable = (props) => {
       </Modal>
     );
   };
+  // model detail
   const ModelDetail = () => {
     return (
       <Modal
@@ -144,31 +217,38 @@ export const BookTable = (props) => {
         aria-labelledby="keep-mounted-modal-title"
         aria-describedby="keep-monted-modal-description"
       >
-        <Box sx={style}></Box>
+        <Box sx={style}>
+          <Card sx={{ maxWidth: 345 }}>
+            <CardMedia sx={{ height: 200 }} image={detail.img} component='div'/>
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Name: {detail.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Status: {detail.status}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Price: {detail.price}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Quantity: {detail.quantity}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                CategoryID: {detail.categoryId}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
       </Modal>
     );
   };
-  // hiển thị phân trang
-  const Page = () => {
-    return (
-      <nav className="d-flex justify-content-center">
-        <ul className="pagination">
-          {pages.map((page) => (
-            <li className={page === curren ? "page-item active" : "page-item"} key={page}>
-              <a className="page-link" onClick={() => pagination(page)}>
-                {page}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    );
-  };
+
   return (
     <>
-     <BookSearch/>
+     <BookSearch onSubmit={handleSearch}/>
       <Book />
-      <Page />
+      <ModelDetail />
+      <Pagegination Pagination={pagination} onPageChange={handlepagechange} />
     </>
   );
 };

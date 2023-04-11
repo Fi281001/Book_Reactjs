@@ -110,7 +110,6 @@ const Page = () => {
               </Button>
             </div>
           </Stack>
-          {/* <CategorySearch/> */}
           <CategoryTable/> 
         </Stack>
       </Container>
