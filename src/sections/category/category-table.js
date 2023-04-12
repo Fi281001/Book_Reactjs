@@ -115,6 +115,7 @@ export const CategoryTable = (props) => {
   const Categories = () => {
     return (
       <>
+      <div className="table-responsive">
         <Table striped bordered hover>
           <thead>
             <tr style={{ background: "#6366F1" }} className="text-white">
@@ -148,6 +149,7 @@ export const CategoryTable = (props) => {
             ))}
           </tbody>
         </Table>
+        </div>
       </>
     );
   };

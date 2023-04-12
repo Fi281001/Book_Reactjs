@@ -16,7 +16,6 @@ export default function UserSearch(props) {
     const {onSubmit} = props;
     const [search,setSearch] = useState("")
     const typingTimeOutRef = useRef(null)
-    
     function handleSearch(e){
         const value = e.target.value
         setSearch(value)
@@ -32,7 +31,6 @@ export default function UserSearch(props) {
             onSubmit(formvalue)    
         }, 300);
     }
-
     return(
             <Card sx={{ p: 2 }}>
           <OutlinedInput

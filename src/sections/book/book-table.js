@@ -45,13 +45,13 @@ export const BookTable = (props) => {
     // phân trang
     const [pagination, setPagination] = useState({
       _page: 1,
-      _limit: 5,
+      _limit: 6,
       _totalRows: 1,
     });
     // xử lí api
     const [load, setLoad] = useState({
       _page: 1,
-      _limit: 5,
+      _limit: 6,
       q: "",
     });
 
@@ -109,6 +109,7 @@ export const BookTable = (props) => {
   const Book = () => {
     return (
       <>
+      <div className="table-responsive">
         <Table striped bordered hover>
           <thead>
             <tr style={{ background: "#6366F1" }} className="text-white">
@@ -162,6 +163,7 @@ export const BookTable = (props) => {
             ))}
           </tbody>
         </Table>
+        </div>
       </>
     );
   };

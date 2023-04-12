@@ -1,6 +1,5 @@
 import axios from "axios";
 import queryString from "query-string";
-import _, { set, update } from "lodash";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
@@ -23,11 +22,10 @@ const style = {
   p: 4,
 };
 import Pagegination from "src/sections/user/page";
-import UserSearch from "src/sections/user//user-search";
+import UserSearch from "src/sections/user/user-search";
 
 export const UserTable = (props) => {
   //open update
-
   const [update, setUpdate] = useState({
     name: " ",
     phone: " ",
@@ -36,6 +34,7 @@ export const UserTable = (props) => {
     point: 0,
     imguser: " ",
   });
+
   // open model update
   const [open, setOpen] = useState(false);
   const handleOpen = async (id) => {
@@ -43,10 +42,10 @@ export const UserTable = (props) => {
     const api = `http://localhost:8000/user/${id}`;
     const res = await axios.get(api);
     setUpdate(res.data);
+    console.log("lan: ", update);
     setOpen(true);
   };
   //xử lý update
-
   const Postdata = async () => {
     const apiupdate = `http://localhost:8000/user/${update.id}`;
     const res = await axios
@@ -59,21 +58,16 @@ export const UserTable = (props) => {
         imguser: update.imguser,
       })
       .then((res) => {
-       
         loading();
-        console.log(res);
+        console.log("khi seve: ", res);
       })
       .catch((err) => console.log(err));
   };
-
   // close update
   const handleClose = () => setOpen(false);
-
   // open detail
   const [openDetail, setOpenDetail] = useState(false);
-
   const [detail, setDetail] = useState([]);
-
   const handleOpenDetail = async (id) => {
     console.log("id", id);
     const api = `http://localhost:8000/user/${id}`;
@@ -90,31 +84,26 @@ export const UserTable = (props) => {
     _limit: 5,
     _totalRows: 1,
   });
-  //xử lý api
+  //xử lý api (phân trang, search)
   const [load, setLoad] = useState({
     _page: 1,
     _limit: 5,
     q: "",
   });
-
+  // call api 
   useEffect(() => {
     async function getPosts() {
       const param = queryString.stringify(load);
-
       try {
         const apilength = await axios.get(`http://localhost:8000/user?q=${load.q}`);
         const legth = apilength.data.length;
-
         const api = `http://localhost:8000/user?${param}`;
-
         const res = await fetch(api);
         const resjson = await res.json();
         console.log("test", { resjson });
-
         const data = resjson;
         setUser(data);
         setPagination({ ...pagination, _page: load._page, _totalRows: legth, q: load.newSearch });
-
       } catch (error) {
         console.log("error");
       }
@@ -148,11 +137,12 @@ export const UserTable = (props) => {
     }
   };
 
-  // hiển thị table
+  // hiển thị data table
   const User = () => {
     return (
       <>
-        <Table striped bordered hover>
+      <div className="table-responsive ">
+        <Table  bordered hover>
           <thead>
             <tr style={{ background: "#6366F1" }} className="text-white">
               <th className="w-20 ">Ảnh</th>
@@ -211,6 +201,7 @@ export const UserTable = (props) => {
             ))}
           </tbody>
         </Table>
+        </div>
       </>
     );
   };
@@ -232,14 +223,14 @@ export const UserTable = (props) => {
       fileReader.onload = () => {
         resolve(fileReader.result);
       };
-
       fileReader.onerror = (error) => {
         reject(error);
       };
     });
   };
-
+// model update
   const ModelUpdate = () => {
+    console.log("hiển thị model: ", update);
     return (
       <Modal
         keepMounted
@@ -260,12 +251,16 @@ export const UserTable = (props) => {
           <TextField
             style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
             maxRows={4}
-            name={update.name}
+            name="name"
             value={update.name}
-            onChange={(e)=>{ setUpdate({
-              ...update,
-              name: e.target.value,
-            })}}/>
+            onChange={(e) => {
+              console.log("====> name::::", e.target.value);
+              return setUpdate({
+                ...update,
+                name: e.target.value,
+              });
+            }}
+            />
         
           <TextField
             style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
@@ -323,7 +318,7 @@ export const UserTable = (props) => {
       </Modal>
     );
   };
-
+// model detail
   const ModelDetail = () => {
     return (
       <Modal
@@ -358,6 +353,7 @@ export const UserTable = (props) => {
       </Modal>
     );
   };
+  // main
   return (
     <>
       <UserSearch onSubmit={handleSearch} />
