@@ -6,11 +6,7 @@ import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import { Button, Box } from "@mui/material";
-import Typography from "@mui/material/Typography";
 const style = {
   position: "absolute",
   top: "50%",
@@ -24,25 +20,11 @@ const style = {
 };
 import Pagegination from "src/sections/book/page";
 import BookSearch from "src/sections/book/book-search";
+import ModelDetail from "src/sections/book/model-detail";
+import ModelUpdate from "src/sections/book/model-update";
 export const BookTable = (props) => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const [book, setBook] = useState([]);
-  // mở model detail
-  const [openDetail, setOpenDetail] = useState(false);
-  const [detail, setDetail] = useState([]);
-  const handleOpenDetail = async (id) => {
-    console.log("id", id);
-    const api = `http://localhost:8000/book/${id}`;
-    const res = await axios.get(api);
-    setDetail(res.data);
-    setOpenDetail(true);
-  };
-  // đóng model deatail
-  const handleCloseDetail = () => setOpenDetail(false); 
-
-    // phân trang
+    //phân trang
     const [pagination, setPagination] = useState({
       _page: 1,
       _limit: 6,
@@ -145,11 +127,11 @@ export const BookTable = (props) => {
 
                 <td>
                   <Button onClick={() => {
-                      handleOpenDetail(book.id);
+                      setOpenDetail(book.id)
                     }}>Detail</Button>
                 </td>
                 <td>
-                  <Button onClick={handleOpen} variant="contained" color="success">
+                  <Button onClick={()=> setOpen(book.id)} variant="contained" color="success">
                     Upadate
                   </Button>
                 </td>
@@ -167,89 +149,36 @@ export const BookTable = (props) => {
       </>
     );
   };
-    //up file ảnh
-  const uploadImage = async (e) => {
-    const file = e.target.files[0];
-    const base64 = await convertBase64(file);
-    setUpdate({
-      ...update,
-      imguser: base64,
-    });
-  };
-  //chuyển qua base 64
-  const convertBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
 
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
-  const ModelUpdate = () => {
-    return (
-      <Modal
-        keepMounted
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="keep-mounted-modal-title"
-        aria-describedby="keep-monted-modal-description"
-      >
-        <Box sx={style}>
-          <TextField fullWidth label="nhập loại sách update" />
-          <div className="mt-2 ">
-            <Button variant="contained">save</Button>
-          </div>
-        </Box>
-      </Modal>
-    );
-  };
-  // model detail
-  const ModelDetail = () => {
-    return (
-      <Modal
-        keepMounted
-        open={openDetail}
-        onClose={handleCloseDetail}
-        aria-labelledby="keep-mounted-modal-title"
-        aria-describedby="keep-monted-modal-description"
-      >
-        <Box sx={style}>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia sx={{ height: 200 }} image={detail.img} component='div'/>
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Name: {detail.name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Status: {detail.status}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Price: {detail.price}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Quantity: {detail.quantity}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                CategoryID: {detail.categoryId}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
-      </Modal>
-    );
-  };
-
+  // đóng mở model detail
+  const [openDetail, setOpenDetail] = useState(0);
+  const handleCloseDetail = () => setOpenDetail(0);
+  // đóng mở update
+  const [open, setOpen] = useState(0);
+  const handleClose = () => setOpen(0);
   return (
     <>
      <BookSearch onSubmit={handleSearch}/>
       <Book />
-      <ModelDetail />
+      {openDetail !==0 && 
+      <Modal
+      keepMounted
+      open={openDetail !== 0}
+      onClose={handleCloseDetail}
+      aria-labelledby="keep-mounted-modal-title"
+      aria-describedby="keep-monted-modal-description"
+    >
+      <ModelDetail id={openDetail}/>
+    </Modal>}
+    {open !== 0 && <Modal
+      keepMounted
+      open={open !== 0}
+      onClose={handleClose}
+      aria-labelledby="keep-mounted-modal-title"
+      aria-describedby="keep-monted-modal-description"
+    >
+      <ModelUpdate id={open}/>
+    </Modal>}
       <Pagegination Pagination={pagination} onPageChange={handlepagechange} />
     </>
   );

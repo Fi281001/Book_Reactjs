@@ -149,11 +149,12 @@ const convertBase64 = (file) => {
         multiple
         type="file"
         name='img'
+        style={{color: "#6366F1"}}
       />
         <TextField className='mb-2' fullWidth label="nhập tên sách" type="text" name='name' value={name} onChange={(e)=> setName(e.target.value)} />
-        <TextField className='mb-2' fullWidth label="nhập mã loại" type="number" name='categoryId' value={categoryId} onChange={(e)=> setCategory((e.target.value)*1)} />
-        <TextField className='mb-2' fullWidth label="nhập số lượng" type="number" name='quantity' value={quantity} onChange={(e)=> setQuantity((e.target.value)*1)} />
-        <TextField className='mb-2' fullWidth label="nhập giá" ype="number" name='price' value={price} onChange={(e)=> setPrice((e.target.value)*1)} />
+        <TextField className='mb-2' fullWidth label="nhập mã loại"  name='categoryId' value={categoryId} onChange={(e)=> setCategory((e.target.value)*1)} />
+        <TextField className='mb-2' fullWidth label="nhập số lượng"  name='quantity' value={quantity} onChange={(e)=> setQuantity((e.target.value)*1)} />
+        <TextField className='mb-2' fullWidth label="nhập giá"  name='price' value={price} onChange={(e)=> setPrice((e.target.value)*1)} />
         <TextField className='mb-2' fullWidth label="nhập trạng thái" type="text" name='status' value={status} onChange={(e)=> setSatus(e.target.value)} />
           <div className='mt-2 '>
               <Button 

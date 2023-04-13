@@ -9,7 +9,7 @@ import axios from "axios";
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon } from '@mui/material';
 import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
+import ModelUpdate from "../category/model-update";
 import { Box, Button, Unstable_Grid2 as Grid } from "@mui/material";
 const style = {
   position: "absolute",
@@ -24,9 +24,7 @@ const style = {
 };
 
 export const CategoryTable = (props) => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+
   const [cat,setCat] = useState([]);
   const api = "http://localhost:8000/categories";
 
@@ -134,7 +132,8 @@ export const CategoryTable = (props) => {
                   <Button
                     variant="contained"
                     color="success"
-                  >
+                    onClick={()=> setOpen(cat.id) }
+                   >
                     Upadate
                   </Button>
                 </td>
@@ -153,30 +152,23 @@ export const CategoryTable = (props) => {
       </>
     );
   };
-  const ModelUpdate = () => {
-    return (
-      <Modal
-        keepMounted
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="keep-mounted-modal-title"
-        aria-describedby="keep-monted-modal-description"
-      >
-        <Box sx={style}>
-          <TextField fullWidth label="nhập loại sách update" />
-          <div className="mt-2 ">
-            <Button variant="contained">save</Button>
-          </div>
-        </Box>
-      </Modal>
-    );
-  };
+  // open model and close model update
+  const [open, setOpen] = useState(0);
+  const handleClose = () => setOpen(0);
 
   return (
     <>
     <CategorySearch onSubmit={handleSearch} />
       <Categories />
-      <ModelUpdate />
+      {open !== 0 && <Modal
+        keepMounted
+        open={open !== 0}
+        onClose={handleClose}
+        aria-labelledby="keep-mounted-modal-title"
+        aria-describedby="keep-monted-modal-description"
+      >
+        <ModelUpdate id={open} />
+      </Modal>}
       <Pagegination Pagination={pagination} onPageChange={handlepagechange} />
     </>
   );

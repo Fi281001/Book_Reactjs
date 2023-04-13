@@ -22,7 +22,7 @@ export default function Pagegination(props) {
 
   // console.log(Pagination);
   function handlepagechange(newPage) {
-    console.log("toto",totalPages);
+
     if (onPageChange) {
       onPageChange(newPage);
     }
