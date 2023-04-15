@@ -133,7 +133,7 @@ const Page = () => {
             <TextField
               className="mb-2"
               fullWidth
-              label="nhập tên sách"
+              label="nhập tên "
               name="name"
               value={user.name}
               onChange={(e) => {

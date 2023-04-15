@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
-
+import axios from 'axios';
 const Page = () => {
   const router = useRouter();
   const auth = useAuth();
@@ -67,6 +67,32 @@ const Page = () => {
     [auth, router]
   );
 
+// const [email, setEmail] = useState('')
+// const [password, setPassword] = useState('')
+// console.log({ email, password })
+// const handleEmail = (e) => {
+//   setEmail(e.target.value)
+// }
+
+// const handlePassword = (e) => {
+//   setPassword(e.target.value)
+// }
+
+// const handleApi = (e) => {
+//   e.preventDefault()
+//   console.log({ email, password })
+//   axios.post('http://localhost:8000/admin', {
+//     email: email,
+//     password: password
+//   }).then(result => {
+//     console.log(result.data)
+//     alert('sign up success')
+//   })
+//     .catch(error => {
+//       alert('service error')
+//       console.log(error)
+//     })
+// }
   return (
     <>
       <Head>
@@ -74,7 +100,7 @@ const Page = () => {
           Login | Book
         </title>
       </Head>
-      <Box
+    <Box
         sx={{
           backgroundColor: '  ',
           flex: '1 1 auto',
@@ -181,7 +207,9 @@ const Page = () => {
             )}
           </div>
         </Box>
-      </Box>
+      </Box> 
+
+
     </>
   );
 };

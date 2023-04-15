@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
+import { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -144,7 +145,7 @@ export const AuthProvider = (props) => {
       name: 'Anika Visser',
       email: 'anika.visser@devias.io'
     };
-
+  
     dispatch({
       type: HANDLERS.SIGN_IN,
       payload: user
@@ -166,7 +167,7 @@ export const AuthProvider = (props) => {
       value={{
         ...state,
         skip,
-        signIn,
+       signIn,
         signUp,
         signOut
       }}

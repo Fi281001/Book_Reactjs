@@ -2,19 +2,51 @@ import Head from 'next/head';
 import { subDays, subHours } from 'date-fns';
 import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { OverviewBudget } from 'src/sections/overview/overview-budget';
+import { OverviewBook } from 'src/sections/overview/overview-book';
 import { OverviewLatestOrders } from 'src/sections/overview/overview-latest-orders';
 import { OverviewLatestProducts } from 'src/sections/overview/overview-latest-products';
 import { OverviewSales } from 'src/sections/overview/overview-sales';
-import { OverviewTasksProgress } from 'src/sections/overview/overview-tasks-progress';
-import { OverviewTotalCustomers } from 'src/sections/overview/overview-total-customers';
+import { OverviewSachThue } from 'src/sections/overview/overview-sach-thue';
+import { OverviewMember } from 'src/sections/overview/overview-Member';
 import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
 import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
-
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 const now = new Date();
 
-const Page = () => (
-  <>
+const Page = () => {
+
+// hiển thị số lượng sách
+const [length,setLength] = useState(0)
+   useEffect(() => {
+    async function getPosts() {
+      try {
+        const apilength = await axios.get("http://localhost:8000/book");
+        const legth = apilength.data.length;
+        setLength(legth)
+      } catch (error) {
+        console.log("error");
+      }
+    }
+    getPosts();
+  }, []);
+
+// hiển thị số lượng thành viên
+const [member,setMember] = useState(0)
+   useEffect(() => {
+    async function getPosts() {
+      try {
+        const apilength = await axios.get("http://localhost:8000/user");
+        const legth = apilength.data.length;
+        setMember(legth)
+      } catch (error) {
+        console.log("error");
+      }
+    }
+    getPosts();
+  }, []);
+  return(
+    <>
     <Head>
       <title>
         Overview | Book
@@ -37,11 +69,13 @@ const Page = () => (
             sm={6}
             lg={3}
           >
-            <OverviewBudget
+          
+            <OverviewBook
               difference={12}
               positive
               sx={{ height: '100%' }}
-              value="$24k"
+
+              value={length}
             />
           </Grid>
           <Grid
@@ -49,11 +83,11 @@ const Page = () => (
             sm={6}
             lg={3}
           >
-            <OverviewTotalCustomers
+            <OverviewMember
               difference={16}
               positive={false}
               sx={{ height: '100%' }}
-              value="1.6k"
+              value={member}
             />
           </Grid>
           <Grid
@@ -61,7 +95,7 @@ const Page = () => (
             sm={6}
             lg={3}
           >
-            <OverviewTasksProgress
+            <OverviewSachThue
               sx={{ height: '100%' }}
               value={75.5}
             />
@@ -221,7 +255,9 @@ const Page = () => (
       </Container>
     </Box>
   </>
-);
+  );
+ 
+};
 
 Page.getLayout = (page) => (
   <DashboardLayout>

@@ -4,12 +4,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+
 import { Button, Box } from "@mui/material";
-import Typography from "@mui/material/Typography";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -96,8 +93,8 @@ export const UserTable = (props) => {
               <th className="w-20 ">Name</th>
               <th className="w-20 ">Phone</th>
               <th className="w-20 ">Email</th>
-              <th className="w-20 ">address</th>
-              <th className="w-20 ">point</th>
+              <th className="w-20 ">Address</th>
+              <th className="w-20 ">Point</th>
               <th className="w-20 ">Detail</th>
               <th>Update</th>
               <th>Delete</th>
@@ -163,25 +160,25 @@ export const UserTable = (props) => {
   return (
     <>
       <UserSearch onSubmit={handleSearch} />
-      
       <User />
-      {open !== 0 && <Modal
-      keepMounted
-      open={open !== 0}
-      onClose={handleClose}
-      aria-labelledby="keep-mounted-modal-title"
-      aria-describedby="keep-monted-modal-description"
-    >
-      <ModelUpdate id={open}/>
-    </Modal>}
-    {openDetail !== 0 && <Modal
-        keepMounted
-        open={openDetail !== 0}
-        onClose={handleCloseDetail}
-        aria-labelledby="keep-mounted-modal-title"
-        aria-describedby="keep-monted-modal-description"
-      >
-       <ModelDetail id ={openDetail}/> 
+
+          {open !== 0 && <Modal
+          keepMounted
+          open={open !== 0}
+          onClose={handleClose}
+          aria-labelledby="keep-mounted-modal-title"
+          aria-describedby="keep-monted-modal-description"
+        >
+            <ModelUpdate id={open}/>
+        </Modal>}
+        {openDetail !== 0 && <Modal
+            keepMounted
+            open={openDetail !== 0}
+            onClose={handleCloseDetail}
+            aria-labelledby="keep-mounted-modal-title"
+            aria-describedby="keep-monted-modal-description"
+          >
+          <ModelDetail id ={openDetail}/> 
       </Modal>}
       <Pagegination Pagination={pagination} onPageChange={handlepagechange} />
     </>

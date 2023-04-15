@@ -3,8 +3,8 @@ import ArrowDownIcon from '@heroicons/react/24/solid/ArrowDownIcon';
 import ArrowUpIcon from '@heroicons/react/24/solid/ArrowUpIcon';
 import CurrencyDollarIcon from '@heroicons/react/24/solid/CurrencyDollarIcon';
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography } from '@mui/material';
-
-export const OverviewBudget = (props) => {
+import ListBulletIcon from '@heroicons/react/24/solid/ListBulletIcon';
+export const OverviewBook = (props) => {
   const { difference, positive = false, sx, value } = props;
 
   return (
@@ -21,21 +21,21 @@ export const OverviewBudget = (props) => {
               color="text.secondary"
               variant="overline"
             >
-              Budget
+              Số lượng sách
             </Typography>
             <Typography variant="h4">
-              {value}
+              {value} books 
             </Typography>
           </Stack>
           <Avatar
             sx={{
-              backgroundColor: 'error.main',
+              backgroundColor: 'red',
               height: 56,
               width: 56
             }}
           >
             <SvgIcon>
-              <CurrencyDollarIcon />
+              <ListBulletIcon />
             </SvgIcon>
           </Avatar>
         </Stack>
@@ -46,30 +46,7 @@ export const OverviewBudget = (props) => {
             spacing={2}
             sx={{ mt: 2 }}
           >
-            <Stack
-              alignItems="center"
-              direction="row"
-              spacing={0.5}
-            >
-              <SvgIcon
-                color={positive ? 'success' : 'error'}
-                fontSize="small"
-              >
-                {positive ? <ArrowUpIcon /> : <ArrowDownIcon />}
-              </SvgIcon>
-              <Typography
-                color={positive ? 'success.main' : 'error.main'}
-                variant="body2"
-              >
-                {difference}%
-              </Typography>
-            </Stack>
-            <Typography
-              color="text.secondary"
-              variant="caption"
-            >
-              Since last month
-            </Typography>
+            
           </Stack>
         )}
       </CardContent>
@@ -77,7 +54,7 @@ export const OverviewBudget = (props) => {
   );
 };
 
-OverviewBudget.prototypes = {
+OverviewBook.prototypes = {
   difference: PropTypes.number,
   positive: PropTypes.bool,
   sx: PropTypes.object,
