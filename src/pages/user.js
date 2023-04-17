@@ -81,7 +81,7 @@ const Page = () => {
         .catch((err) => console.log(err));
     }
   };
-  console.log('re-render1');
+  console.log("re-render1");
   return (
     <>
       <Head>
@@ -129,7 +129,14 @@ const Page = () => {
           aria-describedby="keep-mounted-modal-description"
         >
           <Box sx={style}>
-            <input  onChange={uploadImage} multiple type="file" style={{color: "#6366F1"}} name="img" className="mb-2" />
+            <input
+              onChange={uploadImage}
+              multiple
+              type="file"
+              style={{ color: "#6366F1" }}
+              name="img"
+              className="mb-2"
+            />
             <TextField
               className="mb-2"
               fullWidth

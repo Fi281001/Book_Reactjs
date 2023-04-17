@@ -15,21 +15,14 @@ import axios from 'axios';
 const now = new Date();
 
 const Page = () => {
-
-// hiển thị số lượng sách
-const [length,setLength] = useState(0)
-   useEffect(() => {
-    async function getPosts() {
-      try {
-        const apilength = await axios.get("http://localhost:8000/book");
-        const legth = apilength.data.length;
-        setLength(legth)
-      } catch (error) {
-        console.log("error");
-      }
-    }
-    getPosts();
+  // lấy api sách và tính số lượng sách theo quantity
+  const [books, setBooks] = useState([]);
+  useEffect(() => {
+    axios.get("http://localhost:8000/book").then((response) => {
+      setBooks(response.data);
+    });
   }, []);
+  const totalQuantity = books && books.length > 0 ? books.reduce((total, book) => total + book.quantity, 0) : 0;
 
 // hiển thị số lượng thành viên
 const [member,setMember] = useState(0)
@@ -45,11 +38,37 @@ const [member,setMember] = useState(0)
     }
     getPosts();
   }, []);
+  //xử lý biểu đồ tròn
+  const [cat, setCat] = useState([]);
+  useEffect(() => {
+    axios.get("http://localhost:8000/categories").then((response) => {
+      setCat(response.data);
+    });
+  }, []);
+  const [book, setbook] = useState([]);
+  useEffect(() => {
+    axios.get("http://localhost:8000/book").then((response) => {
+      setbook(response.data);
+    });
+  }, []);
+ 
+  const namecat = cat.map(c=>c.name)
+  const quantityArr = cat.map(c=> {
+    const total =  book.filter(b=>b.categoryId === c.id).map(item => item.quantity).reduce((total, item) => total += item, 0);
+
+    return {
+      "categoryId": c.id,
+      "quantity": total
+  
+    }
+  });
+  console.log('quantityArr:::', quantityArr);
+  const quanti = quantityArr.map(c=>c.quantity)
   return(
     <>
     <Head>
       <title>
-        Overview | Book
+      Statistical | Book
       </title>
     </Head>
     <Box
@@ -75,7 +94,7 @@ const [member,setMember] = useState(0)
               positive
               sx={{ height: '100%' }}
 
-              value={length}
+              value={totalQuantity}
             />
           </Grid>
           <Grid
@@ -134,8 +153,8 @@ const [member,setMember] = useState(0)
             lg={4}
           >
             <OverviewTraffic
-              chartSeries={[63, 15, 22]}
-              labels={['Desktop', 'Tablet', 'Phone']}
+              chartSeries={quanti}
+              labels={namecat}
               sx={{ height: '100%' }}
             />
           </Grid>

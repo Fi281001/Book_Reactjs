@@ -24,7 +24,10 @@ const useChartOptions = (labels) => {
     colors: [
       theme.palette.primary.main,
       theme.palette.success.main,
-      theme.palette.warning.main
+      theme.palette.warning.main,
+      theme.palette.secondary.main,
+      theme.palette.error.main,
+
     ],
     dataLabels: {
       enabled: false
@@ -62,23 +65,7 @@ const useChartOptions = (labels) => {
   };
 };
 
-const iconMap = {
-  Desktop: (
-    <SvgIcon>
-      <ComputerDesktopIcon />
-    </SvgIcon>
-  ),
-  Tablet: (
-    <SvgIcon>
-      <DeviceTabletIcon />
-    </SvgIcon>
-  ),
-  Phone: (
-    <SvgIcon>
-      <PhoneIcon />
-    </SvgIcon>
-  )
-};
+
 
 export const OverviewTraffic = (props) => {
   const { chartSeries, labels, sx } = props;
@@ -86,7 +73,7 @@ export const OverviewTraffic = (props) => {
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Traffic Source" />
+      <CardHeader title="Số lượng sách theo từng loại sách" />
       <CardContent>
         <Chart
           height={300}
@@ -103,8 +90,7 @@ export const OverviewTraffic = (props) => {
           sx={{ mt: 2 }}
         >
           {chartSeries.map((item, index) => {
-            const label = labels[index];
-
+            const label = labels[index]
             return (
               <Box
                 key={label}
@@ -114,10 +100,11 @@ export const OverviewTraffic = (props) => {
                   alignItems: 'center'
                 }}
               >
-                {iconMap[label]}
+              
                 <Typography
                   sx={{ my: 1 }}
                   variant="h6"
+
                 >
                   {label}
                 </Typography>
@@ -125,7 +112,7 @@ export const OverviewTraffic = (props) => {
                   color="text.secondary"
                   variant="subtitle2"
                 >
-                  {item}%
+                  {item} 
                 </Typography>
               </Box>
             );

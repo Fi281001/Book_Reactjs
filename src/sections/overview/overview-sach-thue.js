@@ -32,7 +32,7 @@ export const OverviewSachThue = (props) => {
               Số sách cho thuê
             </Typography>
             <Typography variant="h4">
-              {value}%
+              {value}
             </Typography>
           </Stack>
           <Avatar
@@ -48,10 +48,7 @@ export const OverviewSachThue = (props) => {
           </Avatar>
         </Stack>
         <Box sx={{ mt: 3 }}>
-          <LinearProgress
-            value={value}
-            variant="determinate"
-          />
+            <label>Số lượng sách còn lại  {value}</label>
         </Box>
       </CardContent>
     </Card>
