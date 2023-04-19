@@ -54,15 +54,15 @@ export const items = [
       </SvgIcon>
     )
   },
-  {
-    title: 'Approve',
-    path: '/approve',
-    icon: (
-      <SvgIcon fontSize="small">
-        <CogIcon />
-      </SvgIcon>
-    )
-  },
+  // {
+  //   title: 'Approve',
+  //   path: '/approve',
+  //   icon: (
+  //     <SvgIcon fontSize="small">
+  //       <CogIcon />
+  //     </SvgIcon>
+  //   )
+  // },
 
   // {
   //   title: 'Login',

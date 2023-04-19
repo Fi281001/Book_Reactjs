@@ -1,11 +1,10 @@
 import axios from "axios";
 import queryString from "query-string";
-import _, { set, update } from "lodash";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
 import { Button, Box } from "@mui/material";
 const style = {
   position: "absolute",
@@ -102,9 +101,9 @@ export const BookTable = (props) => {
               <th className="w-20 ">Quantity</th>
               <th className="w-20 ">Price</th>
               <th className="w-20 ">Status</th>
-              <th className="w-20 ">Detail</th>
-              <th>Update</th>
-              <th>Delete</th>
+              <th style={{textAlign: "center"}} className="w-20 ">Detail</th>
+              <th style={{textAlign: "center"}}>Update</th>
+              <th style={{textAlign: "center"}}>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -125,18 +124,17 @@ export const BookTable = (props) => {
                 <td>{book.price}</td>
                 <td>{book.status}</td>
 
-                <td>
+                <td style={{textAlign: "center"}}>
                   <Button onClick={() => {
                       setOpenDetail(book.id)
                     }}>Detail</Button>
                 </td>
-                <td>
+                <td style={{textAlign: "center"}}>
                   <Button onClick={()=> setOpen(book.id)} variant="contained" color="success">
                     Upadate
                   </Button>
                 </td>
-                <td>
-                  {" "}
+                <td style={{textAlign: "center"}}>
                   <Button variant="contained" color="error" onClick={() => handleDelete(book)}>
                     Delete
                   </Button>

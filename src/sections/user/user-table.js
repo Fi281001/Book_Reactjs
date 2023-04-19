@@ -95,9 +95,9 @@ export const UserTable = (props) => {
               <th className="w-20 ">Email</th>
               <th className="w-20 ">Address</th>
               <th className="w-20 ">Point</th>
-              <th className="w-20 ">Detail</th>
-              <th>Update</th>
-              <th>Delete</th>
+              <th style={{textAlign: "center"}} className="w-20 ">Detail</th>
+              <th style={{textAlign: "center"}}>Update</th>
+              <th style={{textAlign: "center"}}>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -116,7 +116,7 @@ export const UserTable = (props) => {
                 <td>{user.email}</td>
                 <td>{user.address}</td>
                 <td>{user.point}</td>
-                <td>
+                <td style={{textAlign: "center"}}>
                   <Button
                     onClick={() => {
                       setOpenDetail(user.id)
@@ -125,7 +125,7 @@ export const UserTable = (props) => {
                     Detail
                   </Button>
                 </td>
-                <td>
+                <td style={{textAlign: "center"}}>
                   <Button
                     onClick={() => {
                       setOpen(user.id)
@@ -136,7 +136,7 @@ export const UserTable = (props) => {
                     Upadate
                   </Button>
                 </td>
-                <td>
+                <td style={{textAlign: "center"}}>
                   <Button variant="contained" color="error" onClick={() => handleDelete(user)}>
                     Delete
                   </Button>

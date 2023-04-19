@@ -67,7 +67,7 @@ const useChartOptions = (labels) => {
 
 
 
-export const OverviewTraffic = (props) => {
+export const OverviewCircle= (props) => {
   const { chartSeries, labels, sx } = props;
   const chartOptions = useChartOptions(labels);
 
@@ -123,7 +123,7 @@ export const OverviewTraffic = (props) => {
   );
 };
 
-OverviewTraffic.propTypes = {
+OverviewCircle.propTypes = {
   chartSeries: PropTypes.array.isRequired,
   labels: PropTypes.array.isRequired,
   sx: PropTypes.object

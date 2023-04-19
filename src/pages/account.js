@@ -48,8 +48,6 @@ const Page = () => (
           </div>
         </Stack>
       </Container>
-      
-      <SettingsPassword />
     </Box>
   </>
 );

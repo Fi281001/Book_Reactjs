@@ -17,29 +17,25 @@ import {
   SvgIcon
 } from '@mui/material';
 
-export const OverviewLatestProducts = (props) => {
-  const { products = [], sx } = props;
-
+export const OverviewList = (props) => {
+  const { pepole = [], sx } = props;
   return (
     <Card sx={sx}>
-      <CardHeader title="Latest Products" />
+      <CardHeader title="Top 5 thành viên có điểm cao nhất" />
       <List>
-        {products.map((product, index) => {
-          const hasDivider = index < products.length - 1;
-          const ago = formatDistanceToNow(product.updatedAt);
-
+        {pepole.map((user) => {
+  
           return (
             <ListItem
-              divider={hasDivider}
-              key={product.id}
+              key={user.id}
             >
               <ListItemAvatar>
                 {
-                  product.image
+                  user.imguser
                     ? (
                       <Box
                         component="img"
-                        src={product.image}
+                        src={user.imguser}
                         sx={{
                           borderRadius: 1,
                           height: 48,
@@ -60,40 +56,24 @@ export const OverviewLatestProducts = (props) => {
                 }
               </ListItemAvatar>
               <ListItemText
-                primary={product.name}
+                primary={user.name}
                 primaryTypographyProps={{ variant: 'subtitle1' }}
-                secondary={`Updated ${ago} ago`}
+                secondary={user.email}
                 secondaryTypographyProps={{ variant: 'body2' }}
               />
-              <IconButton edge="end">
-                <SvgIcon>
-                  <EllipsisVerticalIcon />
-                </SvgIcon>
-              </IconButton>
+              <ListItemText
+                style={{textAlign: "end"}}
+                primary={user.point}
+              />
             </ListItem>
           );
         })}
       </List>
       <Divider />
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button
-          color="inherit"
-          endIcon={(
-            <SvgIcon fontSize="small">
-              <ArrowRightIcon />
-            </SvgIcon>
-          )}
-          size="small"
-          variant="text"
-        >
-          View all
-        </Button>
-      </CardActions>
     </Card>
   );
 };
-
-OverviewLatestProducts.propTypes = {
+OverviewList.propTypes = {
   products: PropTypes.array,
   sx: PropTypes.object
 };

@@ -9,7 +9,7 @@ const HANDLERS = {
 };
 
 const initialState = {
-  isAuthenticated: false,
+  isAuthenticated: true,
   isLoading: true,
   user: null
 };
@@ -73,7 +73,7 @@ export const AuthProvider = (props) => {
 
     initialized.current = true;
 
-    let isAuthenticated = false;
+    let isAuthenticated = true;
 
     try {
       isAuthenticated = window.sessionStorage.getItem('authenticated') === 'true';
@@ -158,7 +158,8 @@ export const AuthProvider = (props) => {
 
   const signOut = () => {
     dispatch({
-      type: HANDLERS.SIGN_OUT
+      type: HANDLERS.SIGN_OUT,
+      
     });
   };
 
@@ -167,7 +168,7 @@ export const AuthProvider = (props) => {
       value={{
         ...state,
         skip,
-       signIn,
+        signIn,
         signUp,
         signOut
       }}

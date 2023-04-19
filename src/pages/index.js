@@ -4,12 +4,12 @@ import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 import { OverviewBook } from 'src/sections/overview/overview-book';
 import { OverviewLatestOrders } from 'src/sections/overview/overview-latest-orders';
-import { OverviewLatestProducts } from 'src/sections/overview/overview-latest-products';
+import { OverviewList } from 'src/sections/overview/overview-toplist';
 import { OverviewSales } from 'src/sections/overview/overview-sales';
 import { OverviewSachThue } from 'src/sections/overview/overview-sach-thue';
 import { OverviewMember } from 'src/sections/overview/overview-Member';
 import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
-import { OverviewTraffic } from 'src/sections/overview/overview-traffic';
+import { OverviewCircle } from 'src/sections/overview/overview-circle';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 const now = new Date();
@@ -38,32 +38,43 @@ const [member,setMember] = useState(0)
     }
     getPosts();
   }, []);
-  //xử lý biểu đồ tròn
+/* xử lý biểu đồ tròn */
+  // call api category lưu vào cat
   const [cat, setCat] = useState([]);
   useEffect(() => {
     axios.get("http://localhost:8000/categories").then((response) => {
       setCat(response.data);
     });
   }, []);
+  // call api book lưu vào book
   const [book, setbook] = useState([]);
   useEffect(() => {
     axios.get("http://localhost:8000/book").then((response) => {
       setbook(response.data);
     });
   }, []);
- 
+      // lấy ra tên trong cat
   const namecat = cat.map(c=>c.name)
-  const quantityArr = cat.map(c=> {
+  // lọc những id book có cùng id của cat  và tính số lượng theo từng loại
+  const arr = cat.map(c=> {
     const total =  book.filter(b=>b.categoryId === c.id).map(item => item.quantity).reduce((total, item) => total += item, 0);
-
     return {
       "categoryId": c.id,
       "quantity": total
-  
     }
   });
-  console.log('quantityArr:::', quantityArr);
-  const quanti = quantityArr.map(c=>c.quantity)
+  const quantity = arr.map(c=>c.quantity)
+
+  // hiển thị top 5 thành viên
+  const [user, setUser] = useState([]);
+  useEffect(() => {
+    axios.get("http://localhost:8000/user").then((response) => {
+      setUser(response.data);
+    });
+  }, []);
+  const sortedPeople = user.sort((a, b) => b.point - a.point);
+  const topFivePeople = sortedPeople.slice(0, 5);
+  //
   return(
     <>
     <Head>
@@ -152,8 +163,8 @@ const [member,setMember] = useState(0)
             md={6}
             lg={4}
           >
-            <OverviewTraffic
-              chartSeries={quanti}
+            <OverviewCircle
+              chartSeries={quantity}
               labels={namecat}
               sx={{ height: '100%' }}
             />
@@ -163,39 +174,10 @@ const [member,setMember] = useState(0)
             md={6}
             lg={4}
           >
-            <OverviewLatestProducts
-              products={[
-                {
-                  id: '5ece2c077e39da27658aa8a9',
-                  image: '/assets/products/product-1.png',
-                  name: 'Healthcare Erbology',
-                  updatedAt: subHours(now, 6).getTime()
-                },
-                {
-                  id: '5ece2c0d16f70bff2cf86cd8',
-                  image: '/assets/products/product-2.png',
-                  name: 'Makeup Lancome Rouge',
-                  updatedAt: subDays(subHours(now, 8), 2).getTime()
-                },
-                {
-                  id: 'b393ce1b09c1254c3a92c827',
-                  image: '/assets/products/product-5.png',
-                  name: 'Skincare Soja CO',
-                  updatedAt: subDays(subHours(now, 1), 1).getTime()
-                },
-                {
-                  id: 'a6ede15670da63f49f752c89',
-                  image: '/assets/products/product-6.png',
-                  name: 'Makeup Lipstick',
-                  updatedAt: subDays(subHours(now, 3), 3).getTime()
-                },
-                {
-                  id: 'bcad5524fe3a2f8f8620ceda',
-                  image: '/assets/products/product-7.png',
-                  name: 'Healthcare Ritual',
-                  updatedAt: subDays(subHours(now, 5), 6).getTime()
+            <OverviewList
+              pepole={
+                topFivePeople
                 }
-              ]}
               sx={{ height: '100%' }}
             />
           </Grid>

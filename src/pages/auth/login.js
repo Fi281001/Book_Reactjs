@@ -16,83 +16,81 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { useAuth } from 'src/hooks/use-auth';
+//import { useAuth } from 'src/hooks/use-auth';
 import { Layout as AuthLayout } from 'src/layouts/auth/layout';
 import axios from 'axios';
+import { margin } from '@mui/system';
+import { mt } from 'date-fns/locale';
 const Page = () => {
   const router = useRouter();
-  const auth = useAuth();
-  const [method, setMethod] = useState('email');
-  const formik = useFormik({
-    initialValues: {
-      email: 'tttt@devias.io',
-      password: 'Password123!',
-      submit: null
-    },
-    validationSchema: Yup.object({
-      email: Yup
-        .string()
-        .email('Must be a valid email')
-        .max(255)
-        .required('Email is required'),
-      password: Yup
-        .string()
-        .max(255)
-        .required('Password is required')
-    }),
-    onSubmit: async (values, helpers) => {
-      try {
-        await auth.signIn(values.email, values.password);
-        router.push('/');
-      } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
-      }
-    }
-  });
+  // const auth = useAuth();
+  // const [method, setMethod] = useState('email');
+  // const formik = useFormik({
+  //   initialValues: {
+  //     email: 'pctrung2',
+  //     password: 'zxc123456',
+  //     submit: null
+  //   },
+  //   validationSchema: Yup.object({
+  //     email: Yup
+  //       .string()
+  //       .email('Must be a valid email')
+  //       .max(255)
+  //       .required('Email is required'),
+  //     password: Yup
+  //       .string()
+  //       .max(255)
+  //       .required('Password is required')
+  //   }),
+  //   onSubmit: async (values, helpers) => {
+  //     try {
+  //       await auth.signIn(values.email, values.password);
+  //       router.push('/');
+  //     } catch (err) {
+  //       helpers.setStatus({ success: false });
+  //       helpers.setErrors({ submit: err.message });
+  //       helpers.setSubmitting(false);
+  //     }
+  //   }
+  // });
 
-  const handleMethodChange = useCallback(
-    (event, value) => {
-      setMethod(value);
-    },
-    []
-  );
+  // const handleMethodChange = useCallback(
+  //   (event, value) => {
+  //     setMethod(value);
+  //   },
+  //   []
+  // );
 
-  const handleSkip = useCallback(
-    () => {
-      auth.skip();
-      router.push('/');
-    },
-    [auth, router]
-  );
+  // const handleSkip = useCallback(
+  //   () => {
+  //     auth.skip();
+  //     router.push('/');
+  //   },
+  //   [auth, router]
+  // );
 
-// const [email, setEmail] = useState('')
-// const [password, setPassword] = useState('')
-// console.log({ email, password })
-// const handleEmail = (e) => {
-//   setEmail(e.target.value)
-// }
+const [username, setName] = useState('')
+const [password, setPassword] = useState('')
+console.log({ username, password })
+const [admin,setAdmin] = useState([])
+const [token,setToken] = useState([])
+const handleApi = (e) => {
+  e.preventDefault()
+  console.log({ username, password })
+  axios.post('http://localhost:8001/api/v1/auth/login', {
+    username: username,
+    password: password
+  }).then(result => {
+    console.log(result.data)
+    
+   
+    router.push("/")
+  }).catch(error => {
+      alert('Sai mật khẩu hoặc tài khoản')
+      console.log(error)
+    })
+}
 
-// const handlePassword = (e) => {
-//   setPassword(e.target.value)
-// }
-
-// const handleApi = (e) => {
-//   e.preventDefault()
-//   console.log({ email, password })
-//   axios.post('http://localhost:8000/admin', {
-//     email: email,
-//     password: password
-//   }).then(result => {
-//     console.log(result.data)
-//     alert('sign up success')
-//   })
-//     .catch(error => {
-//       alert('service error')
-//       console.log(error)
-//     })
-// }
   return (
     <>
       <Head>
@@ -107,6 +105,7 @@ const Page = () => {
           alignItems: 'center',
           display: 'flex',
           justifyContent: 'center'
+          
         }}
       >
         <Box
@@ -141,18 +140,7 @@ const Page = () => {
                 </Link>
               </Typography>
             </Stack>
-            <Tabs
-              onChange={handleMethodChange}
-              sx={{ mb: 3 }}
-              value={method}
-            >
-              <Tab
-                label="Email"
-                value="email"
-              />
-              
-            </Tabs>
-            {method === 'email' && (
+          {/*   {method === 'email' && (
               <form
                 noValidate
                 onSubmit={formik.handleSubmit}
@@ -204,8 +192,35 @@ const Page = () => {
                 </Button>
                
               </form>
-            )}
-          </div>
+            )}*/}
+          </div> 
+          <form>
+           <TextField
+                    fullWidth
+                    label="Email Address"
+                    name="email"
+                    value={username}
+                    onChange={(e)=>setName(e.target.value)}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    name="password"
+                    onChange={(e)=>setPassword(e.target.value)}
+                    type="password"
+                    id={password}
+                    value={password}
+                  />
+                   <Button
+                  fullWidth
+                  size="large"
+                  sx={{ mt: 3 }}
+                  onClick={handleApi}
+                  variant="contained"
+                >
+                  Continue
+                </Button>
+                </form>
         </Box>
       </Box> 
 

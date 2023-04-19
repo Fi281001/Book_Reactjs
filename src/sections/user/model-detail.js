@@ -1,11 +1,9 @@
 import React from 'react'
 import { useEffect, useState } from "react";
-import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import { Button, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import axios from "axios";
 import PropTypes from "prop-types";

@@ -119,8 +119,8 @@ export const CategoryTable = (props) => {
             <tr style={{ background: "#6366F1" }} className="text-white">
               <th className="w-20 ">ID</th>
               <th className="w-50 ">Loại Sách</th>
-              <th>Update</th>
-              <th>Delete</th>
+              <th style={{textAlign: "center"}}>Update</th>
+              <th style={{textAlign: "center"}}>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -128,7 +128,7 @@ export const CategoryTable = (props) => {
               <tr key={cat.id}>
                 <td>{cat.id}</td>
                 <td>{cat.name}</td>
-                <td>
+                <td style={{textAlign: "center"}}>
                   <Button
                     variant="contained"
                     color="success"
@@ -138,8 +138,7 @@ export const CategoryTable = (props) => {
                   </Button>
                 </td>
 
-                <td>
-        
+                <td style={{textAlign: "center"}}>
                   <Button variant="contained" color="error" onClick={() => handleDelete(cat)}>
                     Delete
                   </Button>

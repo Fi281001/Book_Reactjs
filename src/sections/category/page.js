@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import PropTypes from "prop-types";
 import { Button } from "@mui/material";
-import { margin } from "@mui/system";
+
 
 
 Pagegination.propTypes = {
@@ -14,13 +14,12 @@ Pagegination.defaultProps = {
 };
 
 export default function Pagegination(props) {
-  // const [giu, setGiu] = useState(props)
-  // console.log(">>>>>>>>>",giu);
+
   const { Pagination, onPageChange } = props;
   const { _page, _limit, _totalRows } = Pagination;
   const totalPages = Math.ceil(_totalRows / _limit);
 
-  // console.log(Pagination);
+
   function handlepagechange(newPage) {
 
     if (onPageChange) {
