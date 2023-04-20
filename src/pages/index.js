@@ -15,6 +15,7 @@ import axios from 'axios';
 const now = new Date();
 
 const Page = () => {
+
   // lấy api sách và tính số lượng sách theo quantity
   const [books, setBooks] = useState([]);
   useEffect(() => {
@@ -38,7 +39,7 @@ const [member,setMember] = useState(0)
     }
     getPosts();
   }, []);
-/* xử lý biểu đồ tròn */
+  /* xử lý biểu đồ tròn */
   // call api category lưu vào cat
   const [cat, setCat] = useState([]);
   useEffect(() => {

@@ -16,7 +16,7 @@ import {
 import { alpha } from '@mui/material/styles';
 import { usePopover } from 'src/hooks/use-popover';
 import { AccountPopover } from './account-popover';
-
+import axios from 'axios';import { useState, useEffect } from 'react';
 const SIDE_NAV_WIDTH = 280;
 const TOP_NAV_HEIGHT = 64;
 
@@ -25,6 +25,32 @@ export const TopNav = (props) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
   const accountPopover = usePopover();
 
+
+  // xử lý token
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [tv,setTv] = useState([])
+  // Request interceptor for API calls
+  useEffect(()=>{
+  const axiosApiInstance = axios.create();
+  axiosApiInstance.interceptors.request.use(
+    async (config) => {
+      config.headers = { 
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+      return config;
+    },
+    error => {
+      Promise.reject(error)
+  });
+ const getMe = async() => {
+  const res = await axiosApiInstance.get("http://localhost:8001/api/v1/auth/me");
+  setTv(res.data.data)
+ }
+ getMe();
+},[])
+  console.log(tv);
   return (
     <>
       <Box
@@ -94,7 +120,7 @@ export const TopNav = (props) => {
                 height: 40,
                 width: 40
               }}
-              src="/assets/avatars/avatar-anika-visser.png"
+               src={tv.avatar}
             />
           </Stack>
         </Stack>

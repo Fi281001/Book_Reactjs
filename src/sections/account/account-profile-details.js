@@ -80,9 +80,9 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  helperText="Please specify the first name"
-                  label="First name"
-                  name="firstName"
+                  helperText="Please specify the full name"
+                  label="Full name"
+                  name=""
                   onChange={handleChange}
                   required
                   value={values.firstName}
@@ -94,7 +94,7 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  label="Last name"
+                  label="Name"
                   name="lastName"
                   onChange={handleChange}
                   required
@@ -123,7 +123,7 @@ export const AccountProfileDetails = () => {
                   label="Phone Number"
                   name="phone"
                   onChange={handleChange}
-                  type="number"
+                
                   value={values.phone}
                 />
               </Grid>
@@ -133,7 +133,7 @@ export const AccountProfileDetails = () => {
               >
                 <TextField
                   fullWidth
-                  label="Country"
+                  label="Address"
                   name="country"
                   onChange={handleChange}
                   required
@@ -144,25 +144,6 @@ export const AccountProfileDetails = () => {
                 xs={12}
                 md={6}
               >
-                <TextField
-                  fullWidth
-                  label="Select State"
-                  name="state"
-                  onChange={handleChange}
-                  required
-                  select
-                  SelectProps={{ native: true }}
-                  value={values.state}
-                >
-                  {states.map((option) => (
-                    <option
-                      key={option.value}
-                      value={option.value}
-                    >
-                      {option.label}
-                    </option>
-                  ))}
-                </TextField>
               </Grid>
             </Grid>
           </Box>
