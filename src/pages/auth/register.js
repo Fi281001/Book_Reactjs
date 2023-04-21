@@ -1,149 +1,136 @@
-import Head from 'next/head';
-import NextLink from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
-import { useAuth } from 'src/hooks/use-auth';
-import { Layout as AuthLayout } from 'src/layouts/auth/layout';
-
+import Head from "next/head";
+import NextLink from "next/link";
+import { useRouter } from "next/navigation";
+import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material";
+//import { useAuth } from 'src/hooks/use-auth';
+import { Layout as AuthLayout } from "src/layouts/auth/layout";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { isEmpty, set } from "lodash";
 const Page = () => {
   const router = useRouter();
-  const auth = useAuth();
-  const formik = useFormik({
-    initialValues: {
-      email: '',
-      name: '',
-      password: '',
-      submit: null
+  const [isSubmit, setIsSubmit] = useState(false);
+  const [user, setUser] = useState([
+    {
+      email: "",
+      fullName: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
     },
-    validationSchema: Yup.object({
-      email: Yup
-        .string()
-        .email('Must be a valid email')
-        .max(255)
-        .required('Email is required'),
-      name: Yup
-        .string()
-        .max(255)
-        .required('Name is required'),
-      password: Yup
-        .string()
-        .max(255)
-        .required('Password is required')
-    }),
-    onSubmit: async (values, helpers) => {
-      try {
-        await auth.signUp(values.email, values.name, values.password);
-        router.push('/');
-      } catch (err) {
-        helpers.setStatus({ success: false });
-        helpers.setErrors({ submit: err.message });
-        helpers.setSubmitting(false);
-      }
+  ]);
+
+  const Postdata = async () => {
+    const api = "http://localhost:8001/api/v1/auth/register";
+    await axios
+      .post(api, user)
+      .then((res) => {
+        alert("dang");
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    if (isSubmit) {
+      Postdata();
+      setIsSubmit(false);
     }
-  });
+  }, [isSubmit]);
+
+  const setValueForField = (e) => {
+    let newUser = {
+      ...user,
+      [e.target.name]: e.target.value,
+    };
+    setUser(newUser);
+  };
 
   return (
     <>
       <Head>
-        <title>
-          Register | Devias Kit
-        </title>
+        <title>Register | Devias Kit</title>
       </Head>
       <Box
         sx={{
-          flex: '1 1 auto',
-          alignItems: 'center',
-          display: 'flex',
-          justifyContent: 'center'
+          flex: "1 1 auto",
+          alignItems: "center",
+          display: "flex",
+          justifyContent: "center",
         }}
       >
         <Box
           sx={{
             maxWidth: 550,
             px: 3,
-            py: '100px',
-            width: '100%'
+            py: "100px",
+            width: "100%",
           }}
         >
           <div>
-            <Stack
-              spacing={1}
-              sx={{ mb: 3 }}
-            >
-              <Typography variant="h4">
-                Register
-              </Typography>
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
-                Already have an account?
-                &nbsp;
-                <Link
-                  component={NextLink}
-                  href="/auth/login"
-                  underline="hover"
-                  variant="subtitle2"
-                >
+            <Stack spacing={1} sx={{ mb: 2 }}>
+              <Typography variant="h4">Register</Typography>
+              <Typography color="text.secondary" variant="body2">
+                Already have an account? &nbsp;
+                <Link component={NextLink} href="/auth/login" underline="hover" variant="subtitle2">
                   Log in
                 </Link>
               </Typography>
             </Stack>
-            <form
-              noValidate
-              onSubmit={formik.handleSubmit}
-            >
-              <Stack spacing={3}>
+            <form>
+              <Stack>
                 <TextField
-                  error={!!(formik.touched.name && formik.errors.name)}
                   fullWidth
-                  helperText={formik.touched.name && formik.errors.name}
-                  label="Name"
-                  name="name"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.name}
-                />
-                <TextField
-                  error={!!(formik.touched.email && formik.errors.email)}
-                  fullWidth
-                  helperText={formik.touched.email && formik.errors.email}
-                  label="Email Address"
+                  label="Email"
                   name="email"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="email"
-                  value={formik.values.email}
+                  value={user.email}
+                  onChange={(e) => setValueForField(e)}
+                  style={{ marginBottom: "10px" }}
                 />
+                {/* {console.log(user.email)} */}
                 <TextField
-                  error={!!(formik.touched.password && formik.errors.password)}
                   fullWidth
-                  helperText={formik.touched.password && formik.errors.password}
-                  label="Password"
+                  label="FullNanme"
+                  name="fullName"
+                  value={user.fullname}
+                  onChange={(e) => setValueForField(e)}
+                  style={{ marginBottom: "10px" }}
+                />
+                {/* {console.log(user.fullname)} */}
+                <TextField
+                  fullWidth
+                  label="UserNanme"
+                  name="username"
+                  value={user.username}
+                  onChange={(e) => setValueForField(e)}
+                  style={{ marginBottom: "10px" }}
+                />
+                {/* {console.log(user.username)} */}
+                <TextField
+                  fullWidth
+                  label="PassWord"
+                  text="PassWord"
                   name="password"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="password"
-                  value={formik.values.password}
+                  value={user.PassWord}
+                  onChange={(e) => setValueForField(e)}
+                  style={{ marginBottom: "10px" }}
+                />
+                {/* {console.log(user.PassWord)} */}
+                <TextField
+                  fullWidth
+                  label="Nhập lại PassWord"
+                  text="password"
+                  name="confirmPassword"
+                  value={user.confirmPassword}
+                  onChange={(e) => setValueForField(e)}
+                  style={{ marginBottom: "10px" }}
                 />
               </Stack>
-              {formik.errors.submit && (
-                <Typography
-                  color="error"
-                  sx={{ mt: 3 }}
-                  variant="body2"
-                >
-                  {formik.errors.submit}
-                </Typography>
-              )}
               <Button
                 fullWidth
                 size="large"
                 sx={{ mt: 3 }}
-                type="submit"
                 variant="contained"
+                onClick={() => setIsSubmit(true)}
               >
                 Continue
               </Button>
@@ -155,10 +142,6 @@ const Page = () => {
   );
 };
 
-Page.getLayout = (page) => (
-  <AuthLayout>
-    {page}
-  </AuthLayout>
-);
+Page.getLayout = (page) => <AuthLayout>{page}</AuthLayout>;
 
 export default Page;

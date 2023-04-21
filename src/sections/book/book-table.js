@@ -42,19 +42,15 @@ export const BookTable = (props) => {
   useEffect(() => {
     async function getPosts() {
       const param = queryString.stringify(load);
-
       try {
         const apilength = await axios.get(`http://localhost:8000/book?q=${load.q}`);
         const legth = apilength.data.length;
-
         const api = `http://localhost:8000/book?${param}`;
-
         const res = await fetch(api);
         const resjson = await res.json();
         const data = resjson;
         setBook(data);
         setPagination({ ...pagination, _page: load._page, _totalRows: legth, q: load.newSearch });
-
       } catch (error) {
         console.log("error");
       }
@@ -62,6 +58,7 @@ export const BookTable = (props) => {
     getPosts();
   }, [load]);
 
+  // xử lý next hoặc prev trang
   function handlepagechange(newPage) {
     setLoad({ ...load, _page: newPage });
   }

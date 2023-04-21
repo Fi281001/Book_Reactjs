@@ -27,7 +27,7 @@ export const AccountPopover = (props) => {
     error => {
       Promise.reject(error)
   });
- const getMe = async() => {
+  const getMe = async() => {
   const res = await axiosApiInstance.get("http://localhost:8001/api/v1/auth/me");
   setTv(res.data.data)
  }

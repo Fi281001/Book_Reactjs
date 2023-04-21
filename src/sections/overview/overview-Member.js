@@ -20,7 +20,7 @@ export const OverviewMember = (props) => {
               color="text.secondary"
               variant="overline"
             >
-              Số Lượng thành viên
+              Số thành viên
             </Typography>
             <Typography variant="h4">
               {value} people

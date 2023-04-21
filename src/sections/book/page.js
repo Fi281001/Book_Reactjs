@@ -22,7 +22,6 @@ export default function Pagegination(props) {
 
   // console.log(Pagination);
   function handlepagechange(newPage) {
-    console.log("toto",totalPages);
     if (onPageChange) {
       onPageChange(newPage);
     }
@@ -32,10 +31,8 @@ export default function Pagegination(props) {
   return (
     <div style={{ textAlign: "center" }}>
      <Button
-  
         onClick={() => {
           handlepagechange(_page - 1);
-         
         }}
         variant="contained"
         disabled = {_page === 1} 
