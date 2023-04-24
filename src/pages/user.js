@@ -76,12 +76,12 @@ const Page = () => {
         .post(api, user)
         .then((res) => {
           load();
-          console.log(res);
+          // console.log(res);
         })
         .catch((err) => console.log(err));
     }
   };
-  console.log("re-render1");
+  // console.log("re-render1");
   return (
     <>
       <Head>

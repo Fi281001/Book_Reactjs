@@ -1,40 +1,41 @@
-import Head from 'next/head';
-import { subDays, subHours } from 'date-fns';
-import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
-import { OverviewBook } from 'src/sections/overview/overview-book';
-import { OverviewLatestOrders } from 'src/sections/overview/overview-latest-orders';
-import { OverviewList } from 'src/sections/overview/overview-toplist';
-import { OverviewSales } from 'src/sections/overview/overview-sales';
-import { OverviewSachThue } from 'src/sections/overview/overview-sach-thue';
-import { OverviewMember } from 'src/sections/overview/overview-Member';
-import { OverviewTotalProfit } from 'src/sections/overview/overview-total-profit';
-import { OverviewCircle } from 'src/sections/overview/overview-circle';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import Head from "next/head";
+import { subDays, subHours } from "date-fns";
+import { Box, Container, Unstable_Grid2 as Grid } from "@mui/material";
+import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
+import { OverviewBook } from "src/sections/overview/overview-book";
+import { OverviewLatestOrders } from "src/sections/overview/overview-latest-orders";
+import { OverviewList } from "src/sections/overview/overview-toplist";
+import { OverviewSales } from "src/sections/overview/overview-sales";
+import { OverviewSachThue } from "src/sections/overview/overview-sach-thue";
+import { OverviewMember } from "src/sections/overview/overview-Member";
+import { OverviewTotalProfit } from "src/sections/overview/overview-total-profit";
+import { OverviewCircle } from "src/sections/overview/overview-circle";
+import { useEffect, useState } from "react";
+import axios from "axios";
 const now = new Date();
 
 const Page = () => {
-
   // lấy api sách và tính số lượng sách theo quantity
   const [books, setBooks] = useState([]);
+  // console.log("refreshToken::", localStorage.getItem("refreshToken"));
   useEffect(() => {
     axios.get("http://localhost:8000/book").then((response) => {
       setBooks(response.data);
     });
   }, []);
-  const totalQuantity = books && books.length > 0 ? books.reduce((total, book) => total + book.quantity, 0) : 0;
+  const totalQuantity =
+    books && books.length > 0 ? books.reduce((total, book) => total + book.quantity, 0) : 0;
 
-// hiển thị số lượng thành viên
-const [member,setMember] = useState(0)
-   useEffect(() => {
+  // hiển thị số lượng thành viên
+  const [member, setMember] = useState(0);
+  useEffect(() => {
     async function getPosts() {
       try {
         const apilength = await axios.get("http://localhost:8000/user");
         const legth = apilength.data.length;
-        setMember(legth)
+        setMember(legth);
       } catch (error) {
-        console.log("error");
+        // console.log("error");
       }
     }
     getPosts();
@@ -54,17 +55,20 @@ const [member,setMember] = useState(0)
       setbook(response.data);
     });
   }, []);
-      // lấy ra tên trong cat
-  const namecat = cat.map(c=>c.name)
+  // lấy ra tên trong cat
+  const namecat = cat.map((c) => c.name);
   // lọc những id book có cùng id của cat  và tính số lượng theo từng loại
-  const arr = cat.map(c=> {
-    const total =  book.filter(b=>b.categoryId === c.id).map(item => item.quantity).reduce((total, item) => total += item, 0);
+  const arr = cat.map((c) => {
+    const total = book
+      .filter((b) => b.categoryId === c.id)
+      .map((item) => item.quantity)
+      .reduce((total, item) => (total += item), 0);
     return {
-      "categoryId": c.id,
-      "quantity": total
-    }
+      categoryId: c.id,
+      quantity: total,
+    };
   });
-  const quantity = arr.map(c=>c.quantity)
+  const quantity = arr.map((c) => c.quantity);
 
   // hiển thị top 5 thành viên
   const [user, setUser] = useState([]);
@@ -76,195 +80,137 @@ const [member,setMember] = useState(0)
   const sortedPeople = user.sort((a, b) => b.point - a.point);
   const topFivePeople = sortedPeople.slice(0, 5);
   //
-  return(
+  return (
     <>
-    <Head>
-      <title>
-      Statistical | Book
-      </title>
-    </Head>
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8
-      }}
-    >
-      <Container maxWidth="xl">
-        <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-          
-            <OverviewBook
-              difference={12}
-              positive
-              sx={{ height: '100%' }}
-
-              value={totalQuantity}
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewMember
-              difference={16}
-              positive={false}
-              sx={{ height: '100%' }}
-              value={member}
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewSachThue
-              sx={{ height: '100%' }}
-              value={75.5}
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            lg={3}
-          >
-            <OverviewTotalProfit
-              sx={{ height: '100%' }}
-              value="$15k"
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            lg={8}
-          >
-            <OverviewSales
-              chartSeries={[
-                {
-                  name: 'This year',
-                  data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20]
-                },
-                {
-                  name: 'Last year',
-                  data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13]
-                }
-              ]}
-              sx={{ height: '100%' }}
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            md={6}
-            lg={4}
-          >
-            <OverviewCircle
-              chartSeries={quantity}
-              labels={namecat}
-              sx={{ height: '100%' }}
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            md={6}
-            lg={4}
-          >
-            <OverviewList
-              pepole={
-                topFivePeople
-                }
-              sx={{ height: '100%' }}
-            />
-          </Grid>
-          <Grid
-            xs={12}
-            md={12}
-            lg={8}
-          >
-            <OverviewLatestOrders
-              orders={[
-                {
-                  id: 'f69f88012978187a6c12897f',
-                  ref: 'DEV1049',
-                  amount: 30.5,
-                  customer: {
-                    name: 'Ekaterina Tankova'
+      <Head>
+        <title>Statistical | Book</title>
+      </Head>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8,
+        }}
+      >
+        <Container maxWidth="xl">
+          <Grid container spacing={3}>
+            <Grid xs={12} sm={6} lg={3}>
+              <OverviewBook
+                difference={12}
+                positive
+                sx={{ height: "100%" }}
+                value={totalQuantity}
+              />
+            </Grid>
+            <Grid xs={12} sm={6} lg={3}>
+              <OverviewMember
+                difference={16}
+                positive={false}
+                sx={{ height: "100%" }}
+                value={member}
+              />
+            </Grid>
+            <Grid xs={12} sm={6} lg={3}>
+              <OverviewSachThue sx={{ height: "100%" }} value={75.5} />
+            </Grid>
+            <Grid xs={12} sm={6} lg={3}>
+              <OverviewTotalProfit sx={{ height: "100%" }} value="$15k" />
+            </Grid>
+            <Grid xs={12} lg={8}>
+              <OverviewSales
+                chartSeries={[
+                  {
+                    name: "This year",
+                    data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20],
                   },
-                  createdAt: 1555016400000,
-                  status: 'pending'
-                },
-                {
-                  id: '9eaa1c7dd4433f413c308ce2',
-                  ref: 'DEV1048',
-                  amount: 25.1,
-                  customer: {
-                    name: 'Cao Yu'
+                  {
+                    name: "Last year",
+                    data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13],
                   },
-                  createdAt: 1555016400000,
-                  status: 'delivered'
-                },
-                {
-                  id: '01a5230c811bd04996ce7c13',
-                  ref: 'DEV1047',
-                  amount: 10.99,
-                  customer: {
-                    name: 'Alexa Richardson'
+                ]}
+                sx={{ height: "100%" }}
+              />
+            </Grid>
+            <Grid xs={12} md={6} lg={4}>
+              <OverviewCircle chartSeries={quantity} labels={namecat} sx={{ height: "100%" }} />
+            </Grid>
+            <Grid xs={12} md={6} lg={4}>
+              <OverviewList pepole={topFivePeople} sx={{ height: "100%" }} />
+            </Grid>
+            <Grid xs={12} md={12} lg={8}>
+              <OverviewLatestOrders
+                orders={[
+                  {
+                    id: "f69f88012978187a6c12897f",
+                    ref: "DEV1049",
+                    amount: 30.5,
+                    customer: {
+                      name: "Ekaterina Tankova",
+                    },
+                    createdAt: 1555016400000,
+                    status: "pending",
                   },
-                  createdAt: 1554930000000,
-                  status: 'refunded'
-                },
-                {
-                  id: '1f4e1bd0a87cea23cdb83d18',
-                  ref: 'DEV1046',
-                  amount: 96.43,
-                  customer: {
-                    name: 'Anje Keizer'
+                  {
+                    id: "9eaa1c7dd4433f413c308ce2",
+                    ref: "DEV1048",
+                    amount: 25.1,
+                    customer: {
+                      name: "Cao Yu",
+                    },
+                    createdAt: 1555016400000,
+                    status: "delivered",
                   },
-                  createdAt: 1554757200000,
-                  status: 'pending'
-                },
-                {
-                  id: '9f974f239d29ede969367103',
-                  ref: 'DEV1045',
-                  amount: 32.54,
-                  customer: {
-                    name: 'Clarke Gillebert'
+                  {
+                    id: "01a5230c811bd04996ce7c13",
+                    ref: "DEV1047",
+                    amount: 10.99,
+                    customer: {
+                      name: "Alexa Richardson",
+                    },
+                    createdAt: 1554930000000,
+                    status: "refunded",
                   },
-                  createdAt: 1554670800000,
-                  status: 'delivered'
-                },
-                {
-                  id: 'ffc83c1560ec2f66a1c05596',
-                  ref: 'DEV1044',
-                  amount: 16.76,
-                  customer: {
-                    name: 'Adam Denisov'
+                  {
+                    id: "1f4e1bd0a87cea23cdb83d18",
+                    ref: "DEV1046",
+                    amount: 96.43,
+                    customer: {
+                      name: "Anje Keizer",
+                    },
+                    createdAt: 1554757200000,
+                    status: "pending",
                   },
-                  createdAt: 1554670800000,
-                  status: 'delivered'
-                }
-              ]}
-              sx={{ height: '100%' }}
-            />
+                  {
+                    id: "9f974f239d29ede969367103",
+                    ref: "DEV1045",
+                    amount: 32.54,
+                    customer: {
+                      name: "Clarke Gillebert",
+                    },
+                    createdAt: 1554670800000,
+                    status: "delivered",
+                  },
+                  {
+                    id: "ffc83c1560ec2f66a1c05596",
+                    ref: "DEV1044",
+                    amount: 16.76,
+                    customer: {
+                      name: "Adam Denisov",
+                    },
+                    createdAt: 1554670800000,
+                    status: "delivered",
+                  },
+                ]}
+                sx={{ height: "100%" }}
+              />
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
-    </Box>
-  </>
+        </Container>
+      </Box>
+    </>
   );
- 
 };
 
-Page.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;

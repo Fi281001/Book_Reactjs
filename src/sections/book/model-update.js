@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -15,40 +14,42 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-export default function ModelDetail({id}) {
+export default function ModelDetail({ id }) {
+  const [update, setUpdate] = useState({
+    id: 0,
+    name: "",
+    categoryId: 0,
+    quantity: 0,
+    price: 0,
+    status: "",
+    img: "",
+  });
 
-    const [update, setUpdate] = useState({
-        id: 0,
-        name: "",
-        categoryId: 0,
-        quantity: 0,
-        price: 0,
-        status: "",
-        img: ""
-    });
+  // get api
 
-    // get api
-    
-    useEffect(()=>{
-        async function fetchData(){
-            const api = `http://localhost:8000/book/${id}`
-            const res = await axios.get(api)
-            setUpdate(res.data)
-        }
-        fetchData()
-    },[])
-
-    // xử lý save
-    const save = async ()=>{
-        const apiup = `http://localhost:8000/book/${update.id}`
-        const res = await axios.put(apiup,update)
-                            .then((res)=>{
-                                loading()
-                            })
-                            .catch((err)=>{ console.log(err);})
+  useEffect(() => {
+    async function fetchData() {
+      const api = `http://localhost:8000/book/${id}`;
+      const res = await axios.get(api);
+      setUpdate(res.data);
     }
+    fetchData();
+  }, []);
 
-        //up file ảnh
+  // xử lý save
+  const save = async () => {
+    const apiup = `http://localhost:8000/book/${update.id}`;
+    const res = await axios
+      .put(apiup, update)
+      .then((res) => {
+        loading();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  //up file ảnh
   const uploadImage = async (e) => {
     const file = e.target.files[0];
     const base64 = await convertBase64(file);
@@ -72,85 +73,85 @@ export default function ModelDetail({id}) {
       };
     });
   };
-    // load lại trang
-    function loading() {
-        location.reload();
-      }
+  // load lại trang
+  function loading() {
+    location.reload();
+  }
   return (
-   <>
-    <Box sx={style}>
-    <img src={update.img} style={{ width: "100px", height: "100px" }} />
-    <input
-      onChange={uploadImage}
-      multiple
-      type="file"
-      name="img"
-      style={{ marginTop: "4px", marginBottom: "4px", color: "#6366F1" }}
-    />
-    <label>Name</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-      maxRows={4}
-      name="name"
-      value={update.name}
-      onChange={(event) => setUpdate({ ...update, name: event.target.value })}
-    />
-    <label>Status</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-      maxRows={4}
-      name="status"
-      value={update.status}
-      onChange={(e) => {
-        const value = e.target.value;
-        setUpdate({
-          ...update,
-          status: value,
-        });
-      }}
-    />
-    <label>Price</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-      maxRows={4}
-      value={update.price}
-      onChange={(e) =>
-        setUpdate({
-          ...update,
-          price: +e.target.value,
-        })
-      }
-    />
-    <label>Quantity</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-      maxRows={4}
-      value={update.quantity}
-      onChange={(e) =>
-        setUpdate({
-          ...update,
-          quantity: +e.target.value,
-        })
-      }
-    />
-    <label>CategoryID</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-      maxRows={4}
-     value={update.categoryId}
-      onChange={(e) =>
-        setUpdate({
-          ...update,
-          categoryId: +e.target.value,
-        })
-      }
-    />
-    <div className="mt-2 ">
-      <Button variant="contained"onClick={save} >
-        save
-      </Button>
-    </div>
-  </Box>
-   </>
-  )
+    <>
+      <Box sx={style}>
+        <img src={update.img} style={{ width: "100px", height: "100px" }} />
+        <input
+          onChange={uploadImage}
+          multiple
+          type="file"
+          name="img"
+          style={{ marginTop: "4px", marginBottom: "4px", color: "#6366F1" }}
+        />
+        <label>Name</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          maxRows={4}
+          name="name"
+          value={update.name}
+          onChange={(event) => setUpdate({ ...update, name: event.target.value })}
+        />
+        <label>Status</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          maxRows={4}
+          name="status"
+          value={update.status}
+          onChange={(e) => {
+            const value = e.target.value;
+            setUpdate({
+              ...update,
+              status: value,
+            });
+          }}
+        />
+        <label>Price</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          maxRows={4}
+          value={update.price}
+          onChange={(e) =>
+            setUpdate({
+              ...update,
+              price: +e.target.value,
+            })
+          }
+        />
+        <label>Quantity</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          maxRows={4}
+          value={update.quantity}
+          onChange={(e) =>
+            setUpdate({
+              ...update,
+              quantity: +e.target.value,
+            })
+          }
+        />
+        <label>CategoryID</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          maxRows={4}
+          value={update.categoryId}
+          onChange={(e) =>
+            setUpdate({
+              ...update,
+              categoryId: +e.target.value,
+            })
+          }
+        />
+        <div className="mt-2 ">
+          <Button variant="contained" onClick={save}>
+            save
+          </Button>
+        </div>
+      </Box>
+    </>
+  );
 }

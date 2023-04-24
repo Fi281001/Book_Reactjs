@@ -6,64 +6,97 @@ import {
   CardActions,
   CardContent,
   Divider,
-  Typography
-} from '@mui/material';
+  Typography,
+  Skeleton,
+} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import { useEffect, useState } from "react";
+import axiosApiInstance from "../../apis/axiosApi";
+export const AccountProfile = () => {
+  // hiển thị thông tin
+  const [user, setUser] = useState({
+    full_name: "",
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    avatar: "",
+  });
+  const [avatarURL, setAvatarURL] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const getMe = async () => {
+      const res = await axiosApiInstance.get("/auth/me");
+      if (res.data.data) setUser(res.data.data);
+      setIsLoading(false);
+    };
+    getMe();
+  }, []);
 
-const user = {
-  avatar: '/assets/avatars/avatar-anika-visser.png',
-  city: 'Los Angeles',
-  country: 'USA',
-  jobTitle: 'Senior Developer',
-  name: 'Anika Visser',
-  timezone: 'GTM-7'
+  useEffect(() => {
+    setAvatarURL(user.avatar);
+  }, [user]);
+
+  // xử lý file
+  return (
+    <>
+      <Card>
+        <CardContent>
+          <Box
+            sx={{
+              alignItems: "center",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {isLoading ? (
+              <Skeleton
+                variant="circular"
+                sx={{
+                  height: 80,
+                  mb: 2,
+                  width: 80,
+                }}
+              />
+            ) : (
+              <IconButton color="primary" aria-label="upload picture" component="label">
+                <input
+                  hidden
+                  accept="image/*"
+                  type="file"
+                  onChange={(e) => {
+                    let avatarUrl = window.URL.createObjectURL(Array.from(e.target.files)[0]);
+                    setAvatarURL(avatarUrl);
+                  }}
+                />
+                <Avatar
+                  src={avatarURL}
+                  sx={{
+                    height: 80,
+                    mb: 2,
+                    width: 80,
+                  }}
+                />
+              </IconButton>
+            )}
+            <Typography gutterBottom variant="h5">
+              {user.fullName}
+            </Typography>
+            <Typography color="text.secondary" variant="body2">
+              {user.email}
+            </Typography>
+            <Typography color="text.secondary" variant="body2">
+              {user.phone}
+            </Typography>
+          </Box>
+        </CardContent>
+        <Divider />
+        <CardActions>
+          <Button fullWidth variant="text">
+            save
+          </Button>
+        </CardActions>
+      </Card>
+    </>
+  );
 };
-
-export const AccountProfile = () => (
-  <Card>
-    <CardContent>
-      <Box
-        sx={{
-          alignItems: 'center',
-          display: 'flex',
-          flexDirection: 'column'
-        }}
-      >
-        <Avatar
-          src={user.avatar}
-          sx={{
-            height: 80,
-            mb: 2,
-            width: 80
-          }}
-        />
-        <Typography
-          gutterBottom
-          variant="h5"
-        >
-          {user.name}
-        </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
-        >
-          {user.city} {user.country}
-        </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
-        >
-          {user.timezone}
-        </Typography>
-      </Box>
-    </CardContent>
-    <Divider />
-    <CardActions>
-      <Button
-        fullWidth
-        variant="text"
-      >
-        Upload picture
-      </Button>
-    </CardActions>
-  </Card>
-);

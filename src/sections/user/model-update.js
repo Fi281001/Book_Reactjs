@@ -14,7 +14,7 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-export default function ModelUpdate({id}) {
+export default function ModelUpdate({ id }) {
   const [update, setUpdate] = useState({
     id: 0,
     name: "",
@@ -26,18 +26,17 @@ export default function ModelUpdate({id}) {
   });
 
   useEffect(() => {
-    async function fetchData(){
-        const api = `http://localhost:8000/user/${id}`
-        const res = await axios.get(api);
-        setUpdate(res.data)
+    async function fetchData() {
+      const api = `http://localhost:8000/user/${id}`;
+      const res = await axios.get(api);
+      setUpdate(res.data);
     }
 
-    fetchData()
+    fetchData();
+  }, []);
+  // console.log("datda", update);
 
-  }, [])
-  console.log("datda", update);
-  
-//   //xử lý update khi save
+  //   //xử lý update khi save
   const Postdata = async () => {
     const apiupdate = `http://localhost:8000/user/${update.id}`;
     const res = await axios
@@ -74,75 +73,75 @@ export default function ModelUpdate({id}) {
   }
   return (
     <>
-    <Box sx={style}>
-    <img src={update.imguser} style={{ width: "100px", height: "100px" }} />
-    <input
-      onChange={uploadImage}
-      multiple
-      type="file"
-      name="img"
-      style={{ marginTop: "4px", marginBottom: "4px", color: "#6366F1" }}
-    />
-    <label>Name</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-      name="name"
-      value={update.name}
-      onChange={(event) => setUpdate({ ...update, name: event.target.value })}
-    />
-  <label>Phone</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-      name="phone"
-      value={update.phone}
-      onChange={(e) => {
-        const value = e.target.value;
-        setUpdate({
-          ...update,
-          phone: value,
-        });
-      }}
-    />
-    <label>Email</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-      value={update.email}
-      onChange={(e) =>
-        setUpdate({
-          ...update,
-          email: e.target.value,
-        })
-      }
-    />
-    <label>Address</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-      name="address"
-      value={update.address}
-      onChange={(e) =>
-        setUpdate({
-          ...update,
-          address: e.target.value,
-        })
-      }
-    />
-    <label>point</label>
-    <TextField
-      style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
-     value={update.point}
-      onChange={(e) =>
-        setUpdate({
-          ...update,
-          point: +e.target.value,
-        })
-      }
-    />
-    <div className="mt-2 ">
-      <Button variant="contained"onClick={Postdata} >
-        save
-      </Button>
-    </div>
-  </Box>
-  </>
+      <Box sx={style}>
+        <img src={update.imguser} style={{ width: "100px", height: "100px" }} />
+        <input
+          onChange={uploadImage}
+          multiple
+          type="file"
+          name="img"
+          style={{ marginTop: "4px", marginBottom: "4px", color: "#6366F1" }}
+        />
+        <label>Name</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          name="name"
+          value={update.name}
+          onChange={(event) => setUpdate({ ...update, name: event.target.value })}
+        />
+        <label>Phone</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          name="phone"
+          value={update.phone}
+          onChange={(e) => {
+            const value = e.target.value;
+            setUpdate({
+              ...update,
+              phone: value,
+            });
+          }}
+        />
+        <label>Email</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          value={update.email}
+          onChange={(e) =>
+            setUpdate({
+              ...update,
+              email: e.target.value,
+            })
+          }
+        />
+        <label>Address</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          name="address"
+          value={update.address}
+          onChange={(e) =>
+            setUpdate({
+              ...update,
+              address: e.target.value,
+            })
+          }
+        />
+        <label>point</label>
+        <TextField
+          style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
+          value={update.point}
+          onChange={(e) =>
+            setUpdate({
+              ...update,
+              point: +e.target.value,
+            })
+          }
+        />
+        <div className="mt-2 ">
+          <Button variant="contained" onClick={Postdata}>
+            save
+          </Button>
+        </div>
+      </Box>
+    </>
   );
 }

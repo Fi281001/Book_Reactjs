@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import TextField from "@mui/material/TextField";
@@ -14,49 +14,50 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-export default function ModelUpdate( {id}) {
-    const [update,setUpdate] = useState(
-        {
-            id: 0,
-            name: ""
-        }
-    )
-    // get api vào update
-    useEffect(()=>{
-        async function getdata(){
-            const api = `http://localhost:8000/categories/${id}`
-            const res = await axios.get(api)
-            setUpdate(res.data)
-            console.log(res.data);
-        }
-    getdata()
-    },[])
-    // load lại trang
-    function loading() {
-        location.reload();
-      }
-    // xử lý save
-    const save = async () => {
-        const apiupdate = `http://localhost:8000/categories/${update.id}`;
-        const res = await axios
-          .put(apiupdate, update)
-          .then((res) => {
-            loading();
-          })
-          .catch((err) => console.log(err));
-      };
+export default function ModelUpdate({ id }) {
+  const [update, setUpdate] = useState({
+    id: 0,
+    name: "",
+  });
+  // get api vào update
+  useEffect(() => {
+    async function getdata() {
+      const api = `http://localhost:8000/categories/${id}`;
+      const res = await axios.get(api);
+      setUpdate(res.data);
+      // console.log(res.data);
+    }
+    getdata();
+  }, []);
+  // load lại trang
+  function loading() {
+    location.reload();
+  }
+  // xử lý save
+  const save = async () => {
+    const apiupdate = `http://localhost:8000/categories/${update.id}`;
+    const res = await axios
+      .put(apiupdate, update)
+      .then((res) => {
+        loading();
+      })
+      .catch((err) => console.log(err));
+  };
   return (
     <>
-        <Box sx={style}>
-          <TextField fullWidth label="nhập loại sách update" value={update.name} 
-          onChange={(e)=> setUpdate({...update,name: e.target.value})}
-          />
-          <div className="mt-2 ">
-            <Button variant="contained"
-            onClick={save}
-            >save</Button>
-          </div>
-        </Box>
+      <Box sx={style}>
+        <TextField
+          fullWidth
+          label="nhập loại sách update"
+          value={update.name}
+          onChange={(e) => setUpdate({ ...update, name: e.target.value })}
+        />
+        <div className="mt-2 ">
+          <Button variant="contained" onClick={save}>
+            save
+          </Button>
+        </div>
+      </Box>
     </>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -19,60 +19,57 @@ const style = {
   p: 4,
 };
 
-
 ModelDetail.propTypes = {
-    id: PropTypes.object,
- 
-  };
+  id: PropTypes.object,
+};
 ModelDetail.defaultProps = {
-    id: 0,
-  };
+  id: 0,
+};
 export default function ModelDetail(props) {
-    const {id} =  props
-    console.log("detail ", id);
-    const [detail, setDetail] = useState({
-        id: 0,
-        name: "",
-        phone: "",
-        email: "",
-        address: "",
-        point: 0,
-        imguser: "",
-    });
-    useEffect(() => {
-        async function fetchData(){
-            const api = `http://localhost:8000/user/${id}`
-            const res = await axios.get(api);
-            setDetail(res.data)
-        }
-        fetchData()
-    
-      }, [])
-    
+  const { id } = props;
+  // console.log("detail ", id);
+  const [detail, setDetail] = useState({
+    id: 0,
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    point: 0,
+    imguser: "",
+  });
+  useEffect(() => {
+    async function fetchData() {
+      const api = `http://localhost:8000/user/${id}`;
+      const res = await axios.get(api);
+      setDetail(res.data);
+    }
+    fetchData();
+  }, []);
+
   return (
     <>
-    <Box sx={style}>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia sx={{ height: 200 }} image={detail.imguser} component='div'/>
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Name: {detail.name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Phone: {detail.phone}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Email: {detail.email}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Address: {detail.address}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Point: {detail.point}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
+      <Box sx={style}>
+        <Card sx={{ maxWidth: 345 }}>
+          <CardMedia sx={{ height: 200 }} image={detail.imguser} component="div" />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Name: {detail.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Phone: {detail.phone}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Email: {detail.email}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Address: {detail.address}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Point: {detail.point}
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
     </>
   );
 }
