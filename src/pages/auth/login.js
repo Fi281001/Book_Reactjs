@@ -54,7 +54,6 @@ const Page = () => {
         router.push("/");
       })
       .catch((error) => {
-        alert(error);
         setErrors({
           ...errors,
           message: error,
@@ -125,14 +124,14 @@ const Page = () => {
             value={username}
             error={!isEmpty(errors.username)}
             helperText={errors.username}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value.trim())}
             style={{ marginBottom: "10px" }}
           />
           <TextField
             fullWidth
             label="Password"
             name="password"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value.trim())}
             type="password"
             id={password}
             value={password}

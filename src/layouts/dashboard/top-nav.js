@@ -16,7 +16,8 @@ import {
 import { alpha } from "@mui/material/styles";
 import { usePopover } from "src/hooks/use-popover";
 import { AccountPopover } from "./account-popover";
-import axios from "../../apis/axiosApi";
+import axiosApiInstance from "../../apis/axiosApi";
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 const SIDE_NAV_WIDTH = 280;
@@ -27,20 +28,33 @@ export const TopNav = (props) => {
   const { onNavOpen } = props;
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
   const accountPopover = usePopover();
-
-  const [tv, setTv] = useState([]);
+  // hiển thị thông tin
+  const [user, setUser] = useState({
+    full_name: "",
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    avatar: "",
+  });
+  const [avatarURL, setAvatarURL] = useState();
   useEffect(() => {
     const getMe = async () => {
-      try {
-        const res = await axios.get("/auth/me");
-        setTv(res.data.data);
-      } catch (error) {
-        console.log(error);
+      const res = await axiosApiInstance.get("/auth/me");
+      if (res.data.data) {
+        setUser(res.data.data);
+        let linkAvatar = `http://localhost:8001${res.data.data.avatar}`;
+        setUser({
+          ...user,
+          avatar: linkAvatar,
+        });
       }
     };
     getMe();
   }, []);
-  // console.log(tv);
+  useEffect(() => {
+    setAvatarURL(user.avatar);
+  }, [user]);
   return (
     <>
       <Box
@@ -100,7 +114,7 @@ export const TopNav = (props) => {
                 height: 40,
                 width: 40,
               }}
-              src={tv.avatar}
+              src={avatarURL}
             />
           </Stack>
         </Stack>

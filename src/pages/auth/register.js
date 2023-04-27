@@ -42,7 +42,7 @@ const Page = () => {
           password: "",
           confirmPassword: "",
         });
-        router.push("/auth/login");
+        router.push("/auth/otp");
       })
       .catch((error) => {
         // alert(error);
@@ -67,7 +67,7 @@ const Page = () => {
   const setValueForField = (e) => {
     let newUser = {
       ...user,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value.trim(),
     };
     setUser(newUser);
   };
@@ -89,7 +89,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Register | Devias Kit</title>
+        <title>Register | BOOK</title>
       </Head>
       <Box
         sx={{

@@ -88,7 +88,7 @@ export const UserTable = (props) => {
           <Table bordered hover>
             <thead>
               <tr style={{ background: "#6366F1" }} className="text-white">
-                <th className="w-20 ">Ảnh</th>
+                <th className="w-20 ">Avatar</th>
                 <th className="w-20 ">Name</th>
                 <th className="w-20 ">Phone</th>
                 <th className="w-20 ">Email</th>
@@ -128,13 +128,13 @@ export const UserTable = (props) => {
                   </td>
                   <td style={{ textAlign: "center" }}>
                     <Button
-                      onClick={() => {
-                        setOpen(user.id);
-                      }}
+                      // onClick={() => {
+                      //   setOpen(user.id);
+                      // }}
                       variant="contained"
-                      color="success"
+                      color="inherit"
                     >
-                      Upadate
+                      Khóa
                     </Button>
                   </td>
                   <td style={{ textAlign: "center" }}>
@@ -162,7 +162,6 @@ export const UserTable = (props) => {
     <>
       <UserSearch onSubmit={handleSearch} />
       <User />
-
       {open !== 0 && (
         <Modal
           keepMounted

@@ -90,7 +90,7 @@ export const BookTable = (props) => {
           <Table bordered hover>
             <thead>
               <tr style={{ background: "#6366F1" }} className="text-white">
-                <th className="w-20 ">Ảnh</th>
+                <th className="w-20 ">Avatar</th>
                 <th className="w-20 ">Name</th>
                 <th className="w-20 ">Category</th>
                 <th className="w-20 ">Quantity</th>

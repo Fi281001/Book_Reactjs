@@ -27,6 +27,7 @@ export const AccountPopover = (props) => {
     auth.signOut();
     router.push("/auth/login");
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
   }, [onClose, auth, router]);
 
   return (

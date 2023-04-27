@@ -83,8 +83,6 @@ export const AccountProfileDetails = () => {
     let fields = Object.keys(errors);
     let err = errors;
     for (let field of fields) {
-      // console.log("field:::", field);
-      // console.log("error:::", errors[field]);
       const error = errors[field];
       err = {
         [field]: error[0] ?? "",

@@ -112,7 +112,7 @@ export const CategoryTable = (props) => {
             <thead>
               <tr style={{ background: "#6366F1" }} className="text-white">
                 <th className="w-20 ">ID</th>
-                <th className="w-50 ">Loại Sách</th>
+                <th className="w-50 ">Categorybook</th>
                 <th style={{ textAlign: "center" }}>Update</th>
                 <th style={{ textAlign: "center" }}>Delete</th>
               </tr>
