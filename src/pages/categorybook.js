@@ -1,10 +1,10 @@
 import Head from "next/head";
-import { use, useCallback, useMemo, useState } from "react";
+import { useEffect, useCallback, useMemo, useState } from "react";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
-import axios, { Axios } from "axios";
+import axios from "../apis/axiosApi";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-
+import { isEmpty } from "lodash";
 import {
   Alert,
   Box,
@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 
-import { CategorySearch } from "src/sections/category/category-search";
 import { CategoryTable } from "src/sections/category/category-table";
 
 const style = {
@@ -36,16 +35,34 @@ const Page = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
+  const [err, setErr] = useState("");
+  const [save, setSave] = useState(true);
   const [name, setName] = useState("");
-  const api = "http://localhost:8000/categories";
+  const api = "https://thuvien.nemosoftware.net/api/v1/categories";
   function load() {
     location.reload();
   }
-  const Postdata = (e) => {
-    if (name == "") {
-      alert("moi nhap day du");
-      return setOpen(false);
+  // gọi api
+  const [name2, setName2] = useState({
+    id: 0,
+    name: "",
+  });
+
+  useEffect(() => {
+    async function getdata() {
+      const apilength = await axios.get2("https://thuvien.nemosoftware.net/api/v1/categories");
+      const legth = apilength.data.meta.totalRows;
+      const api2 = `https://thuvien.nemosoftware.net/api/v1/categories?limit=${legth}`;
+      const res = await axios.get2(api2);
+      setName2(res.data.data);
+    }
+    getdata();
+  }, []);
+  const Postdata = () => {
+    const nameExists = name2.some((obj) => obj.name === name);
+    if (name == "" || nameExists) {
+      setErr("Vui lòng nhập đầy đủ hoặc tên sách đã tồn tại");
+      setSave(false);
     } else {
       axios
         .post(api, {
@@ -59,65 +76,73 @@ const Page = () => {
   };
   return (
     <>
-      <Head>
-        <title>Categorybook | Book</title>
-      </Head>
+      {localStorage.getItem("token") == undefined ? (
+        window.location.replace("/auth/login")
+      ) : (
+        <>
+          <Head>
+            <title>Categorybook | Book</title>
+          </Head>
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8,
-        }}
-      >
-        <Container maxWidth="xl">
-          <Stack spacing={3}>
-            <Stack direction="row" justifyContent="space-between" spacing={4}>
-              <Stack spacing={1}>
-                <Typography variant="h4">Categorybook</Typography>
-                <Stack alignItems="center" direction="row" spacing={1}></Stack>
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              py: 8,
+            }}
+          >
+            <Container maxWidth="xl">
+              <Stack spacing={3}>
+                <Stack direction="row" justifyContent="space-between" spacing={4}>
+                  <Stack spacing={1}>
+                    <Typography variant="h4">Categorybook</Typography>
+                    <Stack alignItems="center" direction="row" spacing={1}></Stack>
+                  </Stack>
+                  <div>
+                    <Button
+                      onClick={handleOpen}
+                      startIcon={
+                        <SvgIcon fontSize="small">
+                          <PlusIcon />
+                        </SvgIcon>
+                      }
+                      variant="contained"
+                    >
+                      Add
+                    </Button>
+                  </div>
+                </Stack>
+                <CategoryTable />
               </Stack>
-              <div>
-                <Button
-                  onClick={handleOpen}
-                  startIcon={
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  }
-                  variant="contained"
-                >
-                  Add
-                </Button>
-              </div>
-            </Stack>
-            <CategoryTable />
-          </Stack>
-        </Container>
-        <Modal
-          keepMounted
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="keep-mounted-modal-title"
-          aria-describedby="keep-monted-modal-description"
-        >
-          <Box sx={style}>
-            <TextField
-              fullWidth
-              label="nhập loại sách"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoFocus
-            />
-            <div className="mt-2 ">
-              <Button onClick={Postdata} variant="contained">
-                save
-              </Button>
-            </div>
+            </Container>
+            <Modal
+              keepMounted
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="keep-mounted-modal-title"
+              aria-describedby="keep-monted-modal-description"
+            >
+              <Box sx={style}>
+                <TextField
+                  fullWidth
+                  label="nhập loại sách"
+                  name="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  autoFocus
+                  error={!isEmpty(err)}
+                />
+                {save == false ? <p style={{ color: "red" }}>{err}</p> : ""}
+                <div className="mt-2 ">
+                  <Button fullWidth onClick={Postdata} variant="contained">
+                    save
+                  </Button>
+                </div>
+              </Box>
+            </Modal>
           </Box>
-        </Modal>
-      </Box>
+        </>
+      )}
     </>
   );
 };

@@ -22,7 +22,7 @@ export const OverviewSachThue = (props) => {
             <Typography color="text.secondary" gutterBottom variant="overline">
               NUMBER OF BOOK FOR RENT
             </Typography>
-            <Typography variant="h4">{value}</Typography>
+            <Typography variant="h4">{value} Books</Typography>
           </Stack>
           <Avatar
             sx={{
@@ -36,9 +36,6 @@ export const OverviewSachThue = (props) => {
             </SvgIcon>
           </Avatar>
         </Stack>
-        <Box sx={{ mt: 3 }}>
-          <label>The remaining amount {value}</label>
-        </Box>
       </CardContent>
     </Card>
   );

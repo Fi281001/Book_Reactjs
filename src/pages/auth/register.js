@@ -64,13 +64,17 @@ const Page = () => {
     }
   }, [isSubmit]);
 
-  const setValueForField = (e) => {
-    let newUser = {
-      ...user,
-      [e.target.name]: e.target.value.trim(),
-    };
-    setUser(newUser);
-  };
+  // const setValueForField = (e) => {
+  //   let newUser = {
+  //     ...user,
+  //     [e.target.email]: e.target.value.trim(),
+  //     [e.target.username]: e.target.value.trim(),
+  //     [e.target.fullName]: e.target.value,
+  //     [e.target.password]: e.target.value,
+  //     [e.target.confirmPassword]: e.target.value,
+  //   };
+  //   setUser(newUser);
+  // };
 
   useEffect(() => {
     let fields = Object.keys(errors);
@@ -123,18 +127,20 @@ const Page = () => {
               label="Email"
               name="email"
               value={user.email}
-              onChange={(e) => setValueForField(e)}
+              onChange={(e) => setUser({ ...user, email: e.target.value.replace(/ /g, "") })}
               style={{ marginBottom: "10px" }}
               error={!isEmpty(errors.email)}
               helperText={errors.email}
             />
-            {/* {// console.log(user.email)} */}
+
             <TextField
               fullWidth
               label="Fullname"
               name="fullName"
-              value={user.fullname}
-              onChange={(e) => setValueForField(e)}
+              value={user.fullName}
+              onChange={(e) =>
+                setUser({ ...user, fullName: e.target.value.replace(/^\s+|\s+$/g, "") })
+              }
               style={{ marginBottom: "10px" }}
               error={!isEmpty(errors.fullName)}
               helperText={errors.fullName}
@@ -145,7 +151,7 @@ const Page = () => {
               label="Username"
               name="username"
               value={user.username}
-              onChange={(e) => setValueForField(e)}
+              onChange={(e) => setUser({ ...user, username: e.target.value.replace(/ /g, "") })}
               style={{ marginBottom: "10px" }}
               error={!isEmpty(errors.username)}
               helperText={errors.username}
@@ -157,7 +163,9 @@ const Page = () => {
               type="password"
               name="password"
               value={user.PassWord}
-              onChange={(e) => setValueForField(e)}
+              onChange={(e) =>
+                setUser({ ...user, password: e.target.value.replace(/^\s+|\s+$/g, "") })
+              }
               style={{ marginBottom: "10px" }}
               error={!isEmpty(errors.password)}
               helperText={errors.password}
@@ -169,7 +177,9 @@ const Page = () => {
               type="password"
               name="confirmPassword"
               value={user.confirmPassword}
-              onChange={(e) => setValueForField(e)}
+              onChange={(e) =>
+                setUser({ ...user, confirmPassword: e.target.value.replace(/^\s+|\s+$/g, "") })
+              }
               style={{ marginBottom: "10px" }}
               error={!isEmpty(errors.confirmPassword)}
               helperText={errors.confirmPassword}

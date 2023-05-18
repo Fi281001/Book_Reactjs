@@ -3,13 +3,15 @@ import { useRouter } from "next/navigation";
 import PropTypes from "prop-types";
 import { Box, Divider, MenuItem, MenuList, Popover, Typography } from "@mui/material";
 import { useAuth } from "src/hooks/use-auth";
+import { useSelector } from "react-redux";
+import { selectUpdateUser } from "src/reduce/userSlice";
 import axios from "../../apis/axiosApi";
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
   const auth = useAuth();
-
-  // xư lý token lay thong tin
+  const name = useSelector(selectUpdateUser);
+  //xư lý token lay thong tin
   const [tv, setTv] = useState([]);
   useEffect(() => {
     const getMe = async () => {
@@ -22,12 +24,12 @@ export const AccountPopover = (props) => {
     };
     getMe();
   }, []);
+
   const handleSignOut = useCallback(() => {
     onClose?.();
     auth.signOut();
     router.push("/auth/login");
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
+    localStorage.clear();
   }, [onClose, auth, router]);
 
   return (
@@ -49,7 +51,7 @@ export const AccountPopover = (props) => {
       >
         <Typography variant="overline">Account</Typography>
         <Typography color="text.secondary" variant="body2">
-          {tv.full_name}
+          {tv.fullName}
         </Typography>
       </Box>
       <Divider />

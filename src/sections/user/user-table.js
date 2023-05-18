@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../apis/axiosApi";
 import queryString from "query-string";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
@@ -20,45 +20,59 @@ const style = {
 };
 import Pagegination from "src/sections/user/page";
 import UserSearch from "src/sections/user/user-search";
-import ModelUpdate from "./model-update";
+
+import ModelLock from "./model-look";
 import ModelDetail from "./model-detail";
 export const UserTable = (props) => {
   const [user, setUser] = useState([]);
   // phân trang
   const [pagination, setPagination] = useState({
-    _page: 1,
-    _limit: 5,
-    _totalRows: 1,
+    page: 1,
+    perPage: 10,
+    totalRows: 0,
+    from: 1,
+    to: 10,
+    limit: 0,
   });
   //xử lý api (phân trang, search)
   const [load, setLoad] = useState({
-    _page: 1,
-    _limit: 5,
-    q: "",
+    page: 1,
+    perPage: 10,
+    from: 1,
+    to: 10,
+
+    ["fullName[like]"]: "",
   });
   // call api
   useEffect(() => {
     async function getPosts() {
       const param = queryString.stringify(load);
       try {
-        const apilength = await axios.get(`http://localhost:8000/user?q=${load.q}`);
-        const legth = apilength.data.length;
-        const api = `http://localhost:8000/user?${param}`;
-        const res = await fetch(api);
-        const resjson = await res.json();
-        const data = resjson;
-        setUser(data);
-        setPagination({ ...pagination, _page: load._page, _totalRows: legth, q: load.newSearch });
+        const apilength = await axios.get2(
+          `https://thuvien.nemosoftware.net/api/v1/users?relations=package,books&fullName[like]=${load["fullName[like]"]}`
+        );
+        const legth = apilength.data.meta.totalRows;
+        const api = `https://thuvien.nemosoftware.net/api/v1/users?relations=package, books&${param}`;
+        const res = await axios.get2(api);
+        console.log("ssssss", res.data.data);
+        setUser(res.data.data);
+        setPagination({
+          ...pagination,
+          page: load.page,
+          totalRows: legth,
+          ["fullName[like]"]: load.newSearch,
+        });
       } catch (error) {
         // console.log("error");
       }
     }
     getPosts();
   }, [load]);
+  // lock
 
   // xử lý phân trang
   function handlepagechange(newPage) {
-    setLoad({ ...load, _page: newPage });
+    setLoad({ ...load, page: newPage });
   }
   // load lại trang
   function loading() {
@@ -68,15 +82,15 @@ export const UserTable = (props) => {
   function handleSearch(newSearch) {
     setLoad({
       ...load,
-      _page: 1,
-      q: newSearch.search,
+      page: 1,
+      ["fullName[like]"]: newSearch.search,
     });
   }
   //xóa api
   const handleDelete = async (u) => {
-    const api = `http://localhost:8000/user`;
-    if (confirm(`Bạn có muốn xóa ${u.name} ko?`)) {
-      await axios.delete(api + "/" + u.id);
+    const api = `https://thuvien.nemosoftware.net/api/v1/users`;
+    if (confirm(`Bạn có muốn xóa ${u.id} ko?`)) {
+      await axios.delete(api + "/:" + u.id);
       loading();
     }
   };
@@ -84,20 +98,24 @@ export const UserTable = (props) => {
   const User = () => {
     return (
       <>
-        <div className="table-responsive ">
+        <div className="table-responsive">
+          <p style={{ marginBottom: "10px" }}>
+            There are <strong style={{ color: "#6366F1" }}>{pagination.totalRows}</strong> Users
+          </p>
           <Table bordered hover>
             <thead>
               <tr style={{ background: "#6366F1" }} className="text-white">
                 <th className="w-20 ">Avatar</th>
-                <th className="w-20 ">Name</th>
-                <th className="w-20 ">Phone</th>
+                <th className="w-20 ">Full Name</th>
+                <th className="w-30 ">Phone</th>
                 <th className="w-20 ">Email</th>
                 <th className="w-20 ">Address</th>
-                <th className="w-20 ">Point</th>
+                <th className="w-20 ">Score</th>
+                <th className="w-20 ">Package</th>
                 <th style={{ textAlign: "center" }} className="w-20 ">
                   Detail
                 </th>
-                <th style={{ textAlign: "center" }}>Update</th>
+                <th style={{ textAlign: "center" }}>Lock & Unlock</th>
                 <th style={{ textAlign: "center" }}>Delete</th>
               </tr>
             </thead>
@@ -106,17 +124,21 @@ export const UserTable = (props) => {
                 <tr key={user.id}>
                   <td
                     style={{
-                      backgroundImage: `url(${user.imguser})`,
+                      backgroundImage: `url(${user.avatar})`,
                       width: "50px",
                       height: "100%",
                       backgroundSize: "cover",
                     }}
                   ></td>
-                  <td>{user.name}</td>
+                  <td>{user.fullName}</td>
                   <td>{user.phone}</td>
                   <td>{user.email}</td>
-                  <td>{user.address}</td>
-                  <td>{user.point}</td>
+                  <td>
+                    {" "}
+                    <span>{user.address ? user.address.substring(0, 15) + "..." : "N/A"}</span>
+                  </td>
+                  <td>{user.score}</td>
+                  <td>{user.package.type}</td>
                   <td style={{ textAlign: "center" }}>
                     <Button
                       onClick={() => {
@@ -127,20 +149,64 @@ export const UserTable = (props) => {
                     </Button>
                   </td>
                   <td style={{ textAlign: "center" }}>
-                    <Button
-                      // onClick={() => {
-                      //   setOpen(user.id);
-                      // }}
-                      variant="contained"
-                      color="inherit"
-                    >
-                      Khóa
-                    </Button>
+                    {user.id === 1 ? (
+                      <>
+                        <button
+                          type="button"
+                          className="btn btn- btn-secondary"
+                          disabled
+                          onClick={() => {
+                            setLock(user.id);
+                          }}
+                        >
+                          admin
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {user.status === 1 ? (
+                          <button
+                            type="button"
+                            style={{ width: "78px" }}
+                            className="btn btn-warning"
+                            onClick={() => {
+                              setLock(user.id);
+                            }}
+                          >
+                            {" "}
+                            lock{" "}
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn btn-success"
+                            onClick={() => {
+                              setLock(user.id);
+                            }}
+                          >
+                            unlock
+                          </button>
+                        )}
+                      </>
+                    )}
                   </td>
                   <td style={{ textAlign: "center" }}>
-                    <Button variant="contained" color="error" onClick={() => handleDelete(user)}>
-                      Delete
-                    </Button>
+                    {user.id === 1 ? (
+                      <Button
+                        variant="contained"
+                        disabled
+                        color="error"
+                        onClick={() => handleDelete(user)}
+                      >
+                        {" "}
+                        Delete
+                      </Button>
+                    ) : (
+                      <Button variant="contained" color="error" onClick={() => handleDelete(user)}>
+                        {" "}
+                        Delete
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -152,25 +218,27 @@ export const UserTable = (props) => {
   };
 
   //đóng mở model update
-  const [open, setOpen] = useState(0);
-  const handleClose = () => setOpen(0);
+
   // đóng mở model detail
   const [openDetail, setOpenDetail] = useState(0);
   const handleCloseDetail = () => setOpenDetail(0);
-  // main
+
+  // lock
+  const [lock, setLock] = useState(0);
+  const unlock = () => setLock(0);
   return (
     <>
       <UserSearch onSubmit={handleSearch} />
       <User />
-      {open !== 0 && (
+      {lock !== 0 && (
         <Modal
           keepMounted
-          open={open !== 0}
-          onClose={handleClose}
+          open={lock !== 0}
+          onClose={unlock}
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-monted-modal-description"
         >
-          <ModelUpdate id={open} />
+          <ModelLock id={lock} lock={lock} />
         </Modal>
       )}
       {openDetail !== 0 && (
@@ -181,7 +249,7 @@ export const UserTable = (props) => {
           aria-labelledby="keep-mounted-modal-title"
           aria-describedby="keep-monted-modal-description"
         >
-          <ModelDetail id={openDetail} />
+          <ModelDetail id={openDetail} setLock={setLock} />
         </Modal>
       )}
       <Pagegination Pagination={pagination} onPageChange={handlepagechange} />

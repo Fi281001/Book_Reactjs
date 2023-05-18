@@ -10,16 +10,13 @@ import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { isEmpty } from "lodash";
 import { Layout as AuthLayout } from "src/layouts/auth/layout";
 import axios from "../../apis/axiosApi";
+import { color } from "@mui/system";
 const Page = () => {
   const router = useRouter();
 
-  const [username, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({
-    username: "",
-    password: "",
-    message: "",
-  });
+  const [username, setName] = useState("thuctapgosu@gmail.com");
+  const [password, setPassword] = useState("thuctapgosu2023");
+  const [errors, setErrors] = useState("");
 
   const [open, setOpen] = useState(false);
 
@@ -33,58 +30,50 @@ const Page = () => {
     }
     setOpen(false);
   };
-  // console.log({ username, password });
-  const handleApi = (e) => {
+
+  const handleApi = async (e) => {
     e.preventDefault();
-    // console.log({ username, password });
-    axios
-      .post("/auth/login", {
-        username: username,
-        password: password,
-      })
-      .then((result) => {
-        localStorage.setItem("token", result.data.data.accessToken);
-        localStorage.setItem("refreshToken", result.data.data.refreshToken);
-        setErrors({
-          username: "",
-          password: "",
-          message: "",
-        });
-        console.log(result.data.data);
-        router.push("/");
-      })
-      .catch((error) => {
-        setErrors({
-          ...errors,
-          message: error,
-        });
-        let errorContent = errors;
-        if (error.response && error.response.data.error) {
-          errorContent = error.response.data.error.content;
-        }
-        setErrors(errorContent);
+    try {
+      const res = await axios.post("/auth/login", {
+        username,
+        password,
       });
+
+      localStorage.setItem("token", res.data.meta.accessToken);
+      localStorage.setItem("refreshToken", res.data.meta.refreshToken);
+
+      router.push("/");
+    } catch (error) {
+      setErrors({
+        error,
+      });
+
+      let errorContent = error;
+      if (error.response && error.response.data.error.message) {
+        errorContent = error.response.data.error.message;
+      }
+      setErrors(errorContent);
+    }
   };
 
-  useEffect(() => {
-    let fields = Object.keys(errors);
-    let err = errors;
-    for (let field of fields) {
-      const error = errors[field];
-      err = {
-        [field]: error[0] ?? "",
-      };
-    }
-    setErrors(err);
-  }, []);
+  // useEffect(() => {
+  //   let fields = Object.keys(errors);
+  //   let err = errors;
+  //   for (let field of fields) {
+  //     const error = errors[field];
+  //     err = {
+  //       [field]: error[0] ?? "",
+  //     };
+  //   }
+  //   setErrors(err);
+  // }, []);
 
   return (
     <>
       <Head>
         <Typography>Login | Book</Typography>
       </Head>
-
-      {!isEmpty(errors.message) && <Alert severity="error">{errors.message}</Alert>}
+      {/* {!isEmpty(errors) && <Alert severity="error">{errors}</Alert>} */}
       <Box
         sx={{
           backgroundColor: "  ",
@@ -122,8 +111,8 @@ const Page = () => {
             label="Username"
             name="username"
             value={username}
-            error={!isEmpty(errors.username)}
-            helperText={errors.username}
+            error={!isEmpty(errors)}
+            // helperText={errors}
             onChange={(e) => setName(e.target.value.trim())}
             style={{ marginBottom: "10px" }}
           />
@@ -131,14 +120,18 @@ const Page = () => {
             fullWidth
             label="Password"
             name="password"
-            onChange={(e) => setPassword(e.target.value.trim())}
+            onChange={(e) => setPassword(e.target.value)}
             type="password"
             id={password}
             value={password}
-            error={!isEmpty(errors.password)}
-            helperText={errors.password}
+            error={!isEmpty(errors)}
+            // helperText={errors}
           />
-
+          {!isEmpty(errors) && (
+            <Alert style={{ color: "red" }} severity="error">
+              {errors}
+            </Alert>
+          )}
           <Button fullWidth size="large" sx={{ mt: 3 }} onClick={handleApi} variant="contained">
             Continue
           </Button>

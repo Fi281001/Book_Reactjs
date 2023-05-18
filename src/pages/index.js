@@ -11,75 +11,95 @@ import { OverviewMember } from "src/sections/overview/overview-Member";
 import { OverviewTotalProfit } from "src/sections/overview/overview-total-profit";
 import { OverviewCircle } from "src/sections/overview/overview-circle";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../apis/axiosApi";
 const now = new Date();
 
 const Page = () => {
   // lấy api sách và tính số lượng sách theo quantity
   const [books, setBooks] = useState([]);
-  // console.log("refreshToken::", localStorage.getItem("refreshToken"));
   useEffect(() => {
-    axios.get("http://localhost:8000/book").then((response) => {
-      setBooks(response.data);
-    });
+    async function getPosts2() {
+      try {
+        const apilength = await axios.get("https://thuvien.nemosoftware.net/api/v1/books");
+        const legth = apilength.data.meta.totalRows;
+        const res = await axios.get(`https://thuvien.nemosoftware.net/api/v1/books?limit=${legth}`);
+        setBooks(res.data.data);
+      } catch (error) {}
+    }
+    getPosts2();
   }, []);
   const totalQuantity =
     books && books.length > 0 ? books.reduce((total, book) => total + book.quantity, 0) : 0;
+  // hiển thị số lượng sách thuê
+  const [thue, setThue] = useState([]);
+  useEffect(() => {
+    async function getPosts3() {
+      try {
+        const apilength = await axios.get(
+          "https://thuvien.nemosoftware.net/api/v1/book-user?status[eq]=borrowing"
+        );
+        const legth = apilength.data.meta.totalRows;
+        const res = await axios.get(
+          `https://thuvien.nemosoftware.net/api/v1/book-user?status[eq]=borrowing&limit=${legth}`
+        );
+        setThue(res.data.data);
+      } catch (error) {}
+    }
+    getPosts3();
+  }, []);
+  const totalQuantity2 =
+    thue && thue.length > 0 ? thue.reduce((total, thue) => total + thue.amount, 0) : 0;
 
   // hiển thị số lượng thành viên
   const [member, setMember] = useState(0);
   useEffect(() => {
     async function getPosts() {
       try {
-        const apilength = await axios.get("http://localhost:8000/user");
-        const legth = apilength.data.length;
+        const apilength = await axios.get("https://thuvien.nemosoftware.net/api/v1/users");
+        const legth = apilength.data.meta.totalRows;
         setMember(legth);
-      } catch (error) {
-        // console.log("error");
-      }
+      } catch (error) {}
     }
     getPosts();
   }, []);
   /* xử lý biểu đồ tròn */
-  // call api category lưu vào cat
-  const [cat, setCat] = useState([]);
+  const [circle, setCircle] = useState([]);
   useEffect(() => {
-    axios.get("http://localhost:8000/categories").then((response) => {
-      setCat(response.data);
-    });
+    axios
+      .get("https://thuvien.nemosoftware.net/api/v1/books?column=quantity&sortType=desc&limit=5")
+      .then((response) => {
+        setCircle(response.data.data);
+      });
   }, []);
-  // call api book lưu vào book
-  const [book, setbook] = useState([]);
-  useEffect(() => {
-    axios.get("http://localhost:8000/book").then((response) => {
-      setbook(response.data);
-    });
-  }, []);
-  // lấy ra tên trong cat
-  const namecat = cat.map((c) => c.name);
-  // lọc những id book có cùng id của cat  và tính số lượng theo từng loại
-  const arr = cat.map((c) => {
-    const total = book
-      .filter((b) => b.categoryId === c.id)
-      .map((item) => item.quantity)
-      .reduce((total, item) => (total += item), 0);
-    return {
-      categoryId: c.id,
-      quantity: total,
-    };
-  });
-  const quantity = arr.map((c) => c.quantity);
+  const quantity = circle.map((c) => c.quantity);
+  const nameCircle = circle.map((c) => c.name);
 
   // hiển thị top 5 thành viên
   const [user, setUser] = useState([]);
   useEffect(() => {
-    axios.get("http://localhost:8000/user").then((response) => {
-      setUser(response.data);
+    axios.get("https://thuvien.nemosoftware.net/api/v1/users").then((response) => {
+      setUser(response.data.data);
     });
   }, []);
   const sortedPeople = user.sort((a, b) => b.point - a.point);
   const topFivePeople = sortedPeople.slice(0, 5);
-  //
+  //hiển thị duyệt
+  const [browse, setBrows] = useState([]);
+  const [length, setLength] = useState(0);
+  useEffect(() => {
+    axios
+      .get("https://thuvien.nemosoftware.net/api/v1/book-user?relations=book,user")
+      .then((response) => {
+        setLength(response.data.meta.totalRows);
+      });
+  }, []);
+  useEffect(() => {
+    axios
+      .get(`https://thuvien.nemosoftware.net/api/v1/book-user?relations=book,user&limit=${length}`)
+      .then((response) => {
+        setBrows(response.data.data);
+      });
+  }, []);
   return (
     <>
       <Head>
@@ -111,7 +131,7 @@ const Page = () => {
               />
             </Grid>
             <Grid xs={12} sm={6} lg={3}>
-              <OverviewSachThue sx={{ height: "100%" }} value={75.5} />
+              <OverviewSachThue sx={{ height: "100%" }} value={totalQuantity2} />
             </Grid>
             <Grid xs={12} sm={6} lg={3}>
               <OverviewTotalProfit sx={{ height: "100%" }} value="$15k" />
@@ -132,144 +152,13 @@ const Page = () => {
               />
             </Grid>
             <Grid xs={12} md={6} lg={4}>
-              <OverviewCircle chartSeries={quantity} labels={namecat} sx={{ height: "100%" }} />
+              <OverviewCircle chartSeries={quantity} labels={nameCircle} sx={{ height: "100%" }} />
             </Grid>
             <Grid xs={12} md={6} lg={4}>
               <OverviewList pepole={topFivePeople} sx={{ height: "100%" }} />
             </Grid>
-            <Grid xs={12} md={12} lg={8}>
-              <OverviewLatestOrders
-                orders={[
-                  {
-                    id: "f69f88012978187a6c12897f",
-                    ref: "DEV1049",
-                    amount: 30.5,
-                    customer: {
-                      name: "Ekaterina Tankova",
-                    },
-                    createdAt: 1555016400000,
-                    status: "pending",
-                  },
-                  {
-                    id: "9eaa1c7dd4433f413c308ce2",
-                    ref: "DEV1048",
-                    amount: 25.1,
-                    customer: {
-                      name: "Cao Yu",
-                    },
-                    createdAt: 1555016400000,
-                    status: "delivered",
-                  },
-                  {
-                    id: "01a5230c811bd04996ce7c13",
-                    ref: "DEV1047",
-                    amount: 10.99,
-                    customer: {
-                      name: "Alexa Richardson",
-                    },
-                    createdAt: 1554930000000,
-                    status: "refunded",
-                  },
-                  {
-                    id: "1f4e1bd0a87cea23cdb83d18",
-                    ref: "DEV1046",
-                    amount: 96.43,
-                    customer: {
-                      name: "Anje Keizer",
-                    },
-                    createdAt: 1554757200000,
-                    status: "pending",
-                  },
-                  {
-                    id: "9f974f239d29ede969367103",
-                    ref: "DEV1045",
-                    amount: 32.54,
-                    customer: {
-                      name: "Clarke Gillebert",
-                    },
-                    createdAt: 1554670800000,
-                    status: "delivered",
-                  },
-                  {
-                    id: "ffc83c1560ec2f66a1c05596",
-                    ref: "DEV1044",
-                    amount: 16.76,
-                    customer: {
-                      name: "Adam Denisov",
-                    },
-                    createdAt: 1554670800000,
-                    status: "delivered",
-                  },
-                ]}
-                sx={{ height: "100%" }}
-              />
-            </Grid>
-            <Grid xs={12} md={12} lg={12}>
-              <OverviewLatestOrders
-                orders={[
-                  {
-                    id: "f69f88012978187a6c12897f",
-                    ref: "DEV1049",
-                    amount: 30.5,
-                    customer: {
-                      name: "Ekaterina Tankova",
-                    },
-                    createdAt: 1555016400000,
-                    status: "pending",
-                  },
-                  {
-                    id: "9eaa1c7dd4433f413c308ce2",
-                    ref: "DEV1048",
-                    amount: 25.1,
-                    customer: {
-                      name: "Cao Yu",
-                    },
-                    createdAt: 1555016400000,
-                    status: "delivered",
-                  },
-                  {
-                    id: "01a5230c811bd04996ce7c13",
-                    ref: "DEV1047",
-                    amount: 10.99,
-                    customer: {
-                      name: "Alexa Richardson",
-                    },
-                    createdAt: 1554930000000,
-                    status: "refunded",
-                  },
-                  {
-                    id: "1f4e1bd0a87cea23cdb83d18",
-                    ref: "DEV1046",
-                    amount: 96.43,
-                    customer: {
-                      name: "Anje Keizer",
-                    },
-                    createdAt: 1554757200000,
-                    status: "pending",
-                  },
-                  {
-                    id: "9f974f239d29ede969367103",
-                    ref: "DEV1045",
-                    amount: 32.54,
-                    customer: {
-                      name: "Clarke Gillebert",
-                    },
-                    createdAt: 1554670800000,
-                    status: "delivered",
-                  },
-                  {
-                    id: "ffc83c1560ec2f66a1c05596",
-                    ref: "DEV1044",
-                    amount: 16.76,
-                    customer: {
-                      name: "Adam Denisov",
-                    },
-                    createdAt: 1554670800000,
-                    status: "delivered",
-                  },
-                ]}
-                sx={{ height: "100%" }}
-              />
+            <Grid md={12} lg={8}>
+              <OverviewLatestOrders data={browse} sx={{ height: "100%" }} />
             </Grid>
           </Grid>
         </Container>

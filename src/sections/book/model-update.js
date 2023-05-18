@@ -88,19 +88,19 @@ export default function ModelDetail({ id }) {
           name="img"
           style={{ marginTop: "4px", marginBottom: "4px", color: "#6366F1" }}
         />
-        <label>Name</label>
         <TextField
           style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
           maxRows={4}
           name="name"
+          label="nhập tên sách"
           value={update.name}
           onChange={(event) => setUpdate({ ...update, name: event.target.value })}
         />
-        <label>Status</label>
         <TextField
           style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
           maxRows={4}
           name="status"
+          label="nhập status"
           value={update.status}
           onChange={(e) => {
             const value = e.target.value;
@@ -110,10 +110,10 @@ export default function ModelDetail({ id }) {
             });
           }}
         />
-        <label>Price</label>
         <TextField
           style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
           maxRows={4}
+          label="nhập price"
           value={update.price}
           onChange={(e) =>
             setUpdate({
@@ -122,10 +122,11 @@ export default function ModelDetail({ id }) {
             })
           }
         />
-        <label>Quantity</label>
+
         <TextField
           style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
           maxRows={4}
+          label="nhập quantity"
           value={update.quantity}
           onChange={(e) =>
             setUpdate({
@@ -134,10 +135,10 @@ export default function ModelDetail({ id }) {
             })
           }
         />
-        <label>CategoryID</label>
         <TextField
           style={{ marginTop: "4px", marginBottom: "4px", width: "334px" }}
           maxRows={4}
+          label="nhập mã loại"
           value={update.categoryId}
           onChange={(e) =>
             setUpdate({
@@ -147,7 +148,7 @@ export default function ModelDetail({ id }) {
           }
         />
         <div className="mt-2 ">
-          <Button variant="contained" onClick={save}>
+          <Button fullWidth variant="contained" onClick={save}>
             save
           </Button>
         </div>

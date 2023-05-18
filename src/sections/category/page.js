@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button } from "@mui/material";
 
-
-
 Pagegination.propTypes = {
   pagination: PropTypes.object,
   onPageChange: PropTypes.func,
@@ -14,43 +12,38 @@ Pagegination.defaultProps = {
 };
 
 export default function Pagegination(props) {
-
   const { Pagination, onPageChange } = props;
-  const { _page, _limit, _totalRows } = Pagination;
-  const totalPages = Math.ceil(_totalRows / _limit);
-
-
+  const { page, perPage, totalRows, from, to } = Pagination;
+  const totalPages = Math.ceil(totalRows / perPage);
   function handlepagechange(newPage) {
-
     if (onPageChange) {
       onPageChange(newPage);
     }
   }
 
-
   return (
     <div style={{ textAlign: "center" }}>
-     <Button
-  
+      <Button
         onClick={() => {
-          handlepagechange(_page - 1);
-         
+          handlepagechange(page - 1);
         }}
         variant="contained"
-        disabled = {_page === 1} 
+        disabled={page === 1}
       >
-        prev
-      </Button> 
-
+        Prev
+      </Button>
+      <Button>
+        <strong>{page}</strong>
+      </Button>
       <Button
-        disabled = {_page >= totalPages}
+        disabled={page >= totalPages}
         style={{ marginLeft: "5px" }}
         onClick={() => {
-          handlepagechange(_page + 1);
+          handlepagechange(page + 1);
         }}
         variant="contained"
       >
-        next
+        Next
       </Button>
     </div>
   );

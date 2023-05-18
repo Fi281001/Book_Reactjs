@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import axios from "axios";
+import axios from "../../apis/axiosApi";
 import PropTypes from "prop-types";
 const style = {
   position: "absolute",
@@ -27,21 +27,32 @@ ModelDetail.defaultProps = {
 };
 export default function ModelDetail(props) {
   const { id } = props;
-  // console.log("detail ", id);
+
   const [detail, setDetail] = useState({
     id: 0,
+    avatar: "",
     name: "",
     phone: "",
     email: "",
     address: "",
-    point: 0,
-    imguser: "",
+    score: 0,
+    relations: "",
+    package: {
+      id: 0,
+      name: "",
+      type: "",
+      price: 0,
+      discount: 0,
+      description: "",
+      isActive: 0,
+    },
   });
   useEffect(() => {
     async function fetchData() {
-      const api = `http://localhost:8000/user/${id}`;
-      const res = await axios.get(api);
-      setDetail(res.data);
+      const api = `https://thuvien.nemosoftware.net/api/v1/users/${id}?relations=package,books`;
+      const res = await axios.get2(api);
+      console.log(res.data.data);
+      setDetail(res.data.data);
     }
     fetchData();
   }, []);
@@ -50,7 +61,7 @@ export default function ModelDetail(props) {
     <>
       <Box sx={style}>
         <Card sx={{ maxWidth: 345 }}>
-          <CardMedia sx={{ height: 200 }} image={detail.imguser} component="div" />
+          <CardMedia sx={{ height: 200 }} image={detail.avatar} component="div" />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
               Name: {detail.name}
@@ -65,7 +76,10 @@ export default function ModelDetail(props) {
               Address: {detail.address}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Point: {detail.point}
+              Score: {detail.score}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Package: {detail.package.type}
             </Typography>
           </CardContent>
         </Card>

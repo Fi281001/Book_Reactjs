@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import ComputerDesktopIcon from '@heroicons/react/24/solid/ComputerDesktopIcon';
-import DeviceTabletIcon from '@heroicons/react/24/solid/DeviceTabletIcon';
-import PhoneIcon from '@heroicons/react/24/solid/PhoneIcon';
+import PropTypes from "prop-types";
+import ComputerDesktopIcon from "@heroicons/react/24/solid/ComputerDesktopIcon";
+import DeviceTabletIcon from "@heroicons/react/24/solid/DeviceTabletIcon";
+import PhoneIcon from "@heroicons/react/24/solid/PhoneIcon";
 import {
   Box,
   Card,
@@ -10,16 +10,16 @@ import {
   Stack,
   SvgIcon,
   Typography,
-  useTheme
-} from '@mui/material';
-import { Chart } from 'src/components/chart';
+  useTheme,
+} from "@mui/material";
+import { Chart } from "src/components/chart";
 
 const useChartOptions = (labels) => {
   const theme = useTheme();
 
   return {
     chart: {
-      background: 'transparent'
+      background: "transparent",
     },
     colors: [
       theme.palette.primary.main,
@@ -27,61 +27,52 @@ const useChartOptions = (labels) => {
       theme.palette.warning.main,
       theme.palette.secondary.main,
       theme.palette.error.main,
-
     ],
     dataLabels: {
-      enabled: false
+      enabled: false,
     },
     labels,
     legend: {
-      show: false
+      show: false,
     },
     plotOptions: {
       pie: {
-        expandOnClick: false
-      }
+        expandOnClick: false,
+      },
     },
     states: {
       active: {
         filter: {
-          type: 'none'
-        }
+          type: "none",
+        },
       },
       hover: {
         filter: {
-          type: 'none'
-        }
-      }
+          type: "none",
+        },
+      },
     },
     stroke: {
-      width: 0
+      width: 0,
     },
     theme: {
-      mode: theme.palette.mode
+      mode: theme.palette.mode,
     },
     tooltip: {
-      fillSeriesColor: false
-    }
+      fillSeriesColor: false,
+    },
   };
 };
 
-
-
-export const OverviewCircle= (props) => {
+export const OverviewCircle = (props) => {
   const { chartSeries, labels, sx } = props;
   const chartOptions = useChartOptions(labels);
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Số lượng sách theo từng loại sách" />
+      <CardHeader title="Top 5 books with the most volume" />
       <CardContent>
-        <Chart
-          height={300}
-          options={chartOptions}
-          series={chartSeries}
-          type="donut"
-          width="100%"
-        />
+        <Chart height={300} options={chartOptions} series={chartSeries} type="donut" width="100%" />
         <Stack
           alignItems="center"
           direction="row"
@@ -90,29 +81,22 @@ export const OverviewCircle= (props) => {
           sx={{ mt: 2 }}
         >
           {chartSeries.map((item, index) => {
-            const label = labels[index]
+            const label = labels[index];
+
             return (
               <Box
                 key={label}
                 sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center'
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
                 }}
               >
-              
-                <Typography
-                  sx={{ my: 1 }}
-                  variant="h6"
-
-                >
-                  {label}
+                <Typography sx={{ my: 1 }} color="#110000" variant="h8" title={label}>
+                  {label.substring(0, 4)}...
                 </Typography>
-                <Typography
-                  color="text.secondary"
-                  variant="subtitle2"
-                >
-                  {item} 
+                <Typography color="text.secondary" variant="subtitle2">
+                  {item}
                 </Typography>
               </Box>
             );
@@ -126,5 +110,5 @@ export const OverviewCircle= (props) => {
 OverviewCircle.propTypes = {
   chartSeries: PropTypes.array.isRequired,
   labels: PropTypes.array.isRequired,
-  sx: PropTypes.object
+  sx: PropTypes.object,
 };

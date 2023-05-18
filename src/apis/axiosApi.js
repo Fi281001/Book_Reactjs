@@ -12,12 +12,13 @@ import qs from "query-string";
  * use need to set(STORAGE.JWT)
  */
 const axiosClient = axios.create({
-  baseURL: "http://localhost:8001/api/v1",
+  baseURL: "https://thuvien.nemosoftware.net/api/v1",
 });
 
 axiosClient.interceptors.request.use(
   async (config) => {
     let token = localStorage.getItem("token");
+
     config.headers = {
       Authorization: `Bearer ${token}`,
       Accept: "application/json",
@@ -26,7 +27,7 @@ axiosClient.interceptors.request.use(
     return config;
   },
   (error) => {
-    if (error.response.status !== 401) return;
+    if (error.data.data.response.status !== 401) return;
     Promise.reject(error);
   }
 );
@@ -36,18 +37,20 @@ axiosClient.interceptors.response.use(
   },
   async function (error) {
     const { status, data } = error.response;
-    if (error.response.status === 401) {
+
+    if (error.status === 401) {
       const refreshToken = localStorage.getItem("refreshToken");
-      const res = await axios.post("http://localhost:8001/api/v1/auth/refresh-token", {
+
+      const res = await axios.post("https://thuvien.nemosoftware.net/api/v1/auth/refresh-token", {
         refreshToken: refreshToken.toString(),
       });
-      console.log("res:::", res.data.data);
-      axiosClient.defaults.headers.common["Authorization"] = `Bearer ${res.data.data.accessToken}`;
-      localStorage.setItem("token", res.data.data.accessToken);
-      localStorage.setItem("refreshToken", res.data.data.refreshToken);
+
+      axiosClient.defaults.headers.common["Authorization"] = `Bearer ${res.data.meta.accessToken}`;
+      localStorage.setItem("token", res.data.meta.accessToken);
+      localStorage.setItem("refreshToken", res.data.meta.refreshToken);
       return;
     }
-    if (error.response.status === 400 && error.response.status !== 401) {
+    if (error.status === 400 && error.status !== 401) {
       const error = data.message;
       throw new Error(error);
     }
@@ -67,6 +70,9 @@ class AxiosFetch {
   }
   post(uri, body) {
     return axiosClient.post(uri, body);
+  }
+  get2(uri, body) {
+    return axiosClient.get(uri, body);
   }
   put(uri, body) {
     return axiosClient.put(uri, body);

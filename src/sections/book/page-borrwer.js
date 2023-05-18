@@ -3,21 +3,20 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Button } from "@mui/material";
 
-Pagegination.propTypes = {
-  pagination: PropTypes.object,
+PageBorrower.propTypes = {
+  page: PropTypes.object,
   onPageChange: PropTypes.func,
 };
-Pagegination.defaultProps = {
+PageBorrower.defaultProps = {
   onPageChange: null,
 };
 
-export default function Pagegination(props) {
-  const { Pagination, onPageChange } = props;
-  const { page, perPage, totalRows, from, to } = Pagination;
-  const totalPages = Math.ceil(totalRows / perPage);
+export default function PageBorrower(props) {
+  const { Page, onPageChange } = props;
+  const { _page, _limit, _totalRows } = Page;
+  const totalPages = Math.ceil(_totalRows / _limit);
 
   function handlepagechange(newPage) {
-    // console.log("toto",totalPages);
     if (onPageChange) {
       onPageChange(newPage);
     }
@@ -27,23 +26,22 @@ export default function Pagegination(props) {
     <div style={{ textAlign: "center" }}>
       <Button
         onClick={() => {
-          handlepagechange(page - 1);
+          handlepagechange(_page - 1);
         }}
         variant="contained"
-        disabled={page === 1}
+        disabled={_page === 1}
       >
         Prev
       </Button>
-
       <Button>
         {" "}
-        <strong>{page}</strong>
+        <strong>{_page}</strong>
       </Button>
       <Button
-        disabled={page >= totalPages}
+        disabled={_page >= totalPages}
         style={{ marginLeft: "5px" }}
         onClick={() => {
-          handlepagechange(page + 1);
+          handlepagechange(_page + 1);
         }}
         variant="contained"
       >

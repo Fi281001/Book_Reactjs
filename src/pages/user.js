@@ -6,28 +6,34 @@ import { UserTable } from "src/sections/user/user-table";
 const Page = () => {
   return (
     <>
-      <Head>
-        <title>User | BOOK</title>
-      </Head>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          py: 8,
-        }}
-      >
-        <Container maxWidth="xl">
-          <Stack spacing={3}>
-            <Stack direction="row" justifyContent="space-between" spacing={4}>
-              <Stack spacing={1}>
-                <Typography variant="h4">User</Typography>
-                <Stack alignItems="center" direction="row" spacing={1}></Stack>
+      {localStorage.getItem("token") == undefined ? (
+        window.location.replace("/auth/login")
+      ) : (
+        <>
+          <Head>
+            <title>User | BOOK</title>
+          </Head>
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              py: 8,
+            }}
+          >
+            <Container maxWidth="xl">
+              <Stack spacing={3}>
+                <Stack direction="row" justifyContent="space-between" spacing={4}>
+                  <Stack spacing={1}>
+                    <Typography variant="h4">User</Typography>
+                    <Stack alignItems="center" direction="row" spacing={1}></Stack>
+                  </Stack>
+                </Stack>
+                <UserTable />
               </Stack>
-            </Stack>
-            <UserTable />
-          </Stack>
-        </Container>
-      </Box>
+            </Container>
+          </Box>
+        </>
+      )}
     </>
   );
 };

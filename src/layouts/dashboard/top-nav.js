@@ -16,13 +16,13 @@ import {
 import { alpha } from "@mui/material/styles";
 import { usePopover } from "src/hooks/use-popover";
 import { AccountPopover } from "./account-popover";
-import axiosApiInstance from "../../apis/axiosApi";
-import axios from "axios";
+import axios from "../../apis/axiosApi";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 const SIDE_NAV_WIDTH = 280;
 const TOP_NAV_HEIGHT = 64;
-
+import { useDispatch, useSelector } from "react-redux";
+import { selectUpdateAvatar, updateAvatar } from "src/reduce/userSlice";
 export const TopNav = (props) => {
   const router = useRouter();
   const { onNavOpen } = props;
@@ -37,24 +37,50 @@ export const TopNav = (props) => {
     address: "",
     avatar: "",
   });
-  const [avatarURL, setAvatarURL] = useState();
+  const dispatch = useDispatch();
+  // const [avatarURL, setAvatarURL] = useState(useSelector((state) => state.avatar));
+  // useEffect(() => {
+  //   const getMe = async () => {
+  //     const res = await axiosApiInstance.get("/auth/me");
+  //     if (res.data.data) {
+  //       setUser(res.data.data);
+  //       let linkAvatar = `http://localhost:8001${res.data.data.avatar}`;
+  //       setUser({
+  //         ...user,
+  //         avatar: linkAvatar,
+  //       });
+  //     }
+  //   };
+  //   getMe();
+  // }, []);
+  // useEffect(() => {
+  //   setAvatarURL(user.avatar);
+  //   // setAvatarURL(avatarState);
+  // }, [user]);
+
+  // useEffect(() => {
+  //   // dispatch(
+  //   //   updateAvatar({
+  //   //     avatar: avatarURL,
+  //   //     username: user.email,
+  //   //   })
+  //   // );
+
+  //   setAvatarURL(avatarURL);
+  // }, [dispatch]);
+  const [tv, setTv] = useState([]);
   useEffect(() => {
     const getMe = async () => {
-      const res = await axiosApiInstance.get("/auth/me");
-      if (res.data.data) {
-        setUser(res.data.data);
-        let linkAvatar = `http://localhost:8001${res.data.data.avatar}`;
-        setUser({
-          ...user,
-          avatar: linkAvatar,
-        });
+      try {
+        const res = await axios.get("/auth/me");
+        setTv(res.data.data);
+      } catch (error) {
+        console.log(error);
       }
     };
     getMe();
   }, []);
-  useEffect(() => {
-    setAvatarURL(user.avatar);
-  }, [user]);
+
   return (
     <>
       <Box
@@ -93,19 +119,6 @@ export const TopNav = (props) => {
             )}
           </Stack>
           <Stack alignItems="center" direction="row" spacing={2}>
-            {/* <Tooltip title="Notifications">
-              <IconButton>
-                <Badge
-                  badgeContent={4}
-                  color="success"
-                  variant="dot"
-                >
-                  <SvgIcon fontSize="small">
-                    <BellIcon />
-                  </SvgIcon>
-                </Badge>
-              </IconButton>
-            </Tooltip> */}
             <Avatar
               onClick={accountPopover.handleOpen}
               ref={accountPopover.anchorRef}
@@ -114,7 +127,7 @@ export const TopNav = (props) => {
                 height: 40,
                 width: 40,
               }}
-              src={avatarURL}
+              src={tv.avatar}
             />
           </Stack>
         </Stack>

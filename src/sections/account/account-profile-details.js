@@ -16,8 +16,9 @@ import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
-import axiosApiInstance from "../../apis/axiosApi";
-
+import axios from "../../apis/axiosApi";
+import { useDispatch } from "react-redux";
+import updateUser from "src/reduce/userSlice";
 export const AccountProfileDetails = () => {
   const [open, setOpen] = useState(false);
 
@@ -34,7 +35,6 @@ export const AccountProfileDetails = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState({
-    full_name: "",
     fullName: "",
     email: "",
     phone: "",
@@ -42,7 +42,6 @@ export const AccountProfileDetails = () => {
     avatar: "",
   });
   const [errors, setErrors] = useState({
-    full_name: "",
     fullName: "",
     email: "",
     phone: "",
@@ -52,7 +51,7 @@ export const AccountProfileDetails = () => {
 
   useEffect(() => {
     const getMe = async () => {
-      const res = await axiosApiInstance.get("/auth/me");
+      const res = await axios.get("/auth/me");
       if (res.data.data) setUser(res.data.data);
       setIsLoading(false);
     };
@@ -62,16 +61,15 @@ export const AccountProfileDetails = () => {
   const save = async () => {
     try {
       const apiup = `/auth/update-me`;
-      const res = await axiosApiInstance.patch(apiup, user);
+      const res = await axios.patch(apiup, user);
       setUser(res.data.data);
       setErrors({
-        full_name: "",
         fullName: "",
-        email: "",
         phone: "",
         address: "",
         avatar: "",
       });
+      //dispatch(updateUser(res.data.data.full_name));
       handleClick();
     } catch (error) {
       const errorContent = error.response.data.error.content;
@@ -128,11 +126,10 @@ export const AccountProfileDetails = () => {
                   <Typography sx={{ fontWeight: "bold" }}>Full name</Typography>
                   <TextField
                     fullWidth
-                    value={user.full_name}
+                    value={user.fullName}
                     onChange={(e) =>
                       setUser({
                         ...user,
-                        full_name: e.target.value,
                         fullName: e.target.value,
                       })
                     }
@@ -142,18 +139,7 @@ export const AccountProfileDetails = () => {
                 </Grid>
                 <Grid xs={12} md={6}>
                   <Typography sx={{ fontWeight: "bold" }}>Email</Typography>
-                  <TextField
-                    fullWidth
-                    value={user.email}
-                    onChange={(e) =>
-                      setUser({
-                        ...user,
-                        email: e.target.value,
-                      })
-                    }
-                    error={!isEmpty(errors.email)}
-                    helperText={errors.email}
-                  />
+                  <TextField fullWidth value={user.email} disabled />
                 </Grid>
                 <Grid xs={12} md={6}>
                   <Typography sx={{ fontWeight: "bold" }}>Phone</Typography>
